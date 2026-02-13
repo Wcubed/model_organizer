@@ -22,6 +22,7 @@ func scan_library():
 	var found_models: Array[Model] = []
 	scan_directory(library_dir, found_models)
 	
+	found_models.sort_custom(_sort_models_by_name)
 	models = found_models
 	
 	refresh_model_cards()
@@ -64,6 +65,10 @@ func _filter_ignored_files(file: String) -> bool:
 			return false
 	
 	return true
+
+
+func _sort_models_by_name(a: Model, b: Model) -> bool:
+	return a.name < b.name
 
 func _on_path_button_pressed() -> void:
 	folder_dialog.show()
