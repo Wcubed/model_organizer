@@ -7,6 +7,13 @@
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5e326"]
 bg_color = Color(0.078431375, 0.078431375, 0.078431375, 1)
 
+[sub_resource type="InputEventKey" id="InputEventKey_eg6m8"]
+device = -1
+keycode = 4194305
+
+[sub_resource type="Shortcut" id="Shortcut_drs6m"]
+events = [SubResource("InputEventKey_eg6m8")]
+
 [node name="View3dModel" type="PanelContainer" unique_id=680745111]
 anchors_preset = 15
 anchor_right = 1.0
@@ -33,6 +40,8 @@ size_flags_horizontal = 3
 [node name="CloseButton" type="Button" parent="VBoxContainer/PanelContainer/Toolbar" unique_id=1265881204]
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
+tooltip_text = "Close"
+shortcut = SubResource("Shortcut_drs6m")
 text = "X"
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="VBoxContainer" unique_id=299587002]
