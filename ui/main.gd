@@ -48,8 +48,6 @@ func scan_library():
 	found_models.sort_custom(_sort_models_by_name)
 	models = found_models
 	
-	amount_label.text = "%s models" % models.size()
-	
 	run_search_and_display()
 
 func scan_directory(path: String, found_models: Array[Model]):
@@ -85,6 +83,9 @@ func run_search_and_display():
 		for model in models:
 			if model.matches_search(search_text):
 				searched_models.append(model)
+	
+	# Display
+	amount_label.text = "%d/%d" % [searched_models.size(), models.size()]
 	
 	for card in model_cards.get_children():
 		model_cards.remove_child(card)
@@ -123,7 +124,7 @@ func _on_reload_button_pressed() -> void:
 	scan_library()
 
 
-func _on_search_edit_text_changed(new_text: String) -> void:
+func _on_search_edit_text_changed(_new_text: String) -> void:
 	run_search_and_display()
 
 

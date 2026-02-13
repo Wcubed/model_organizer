@@ -31,12 +31,27 @@ func scan_directory():
 	_load_cover_image()
 
 ## Returns true if the model matches the search parameters.
-func matches_search(text: String) -> bool:
-	if name.contains(text) || directory.contains(text):
+func matches_search(search_text: String) -> bool:
+	var text_items = search_text.to_lower().split(" ")
+	
+	for item in text_items:
+		if item.is_empty():
+			continue
+		
+		if !_contains_text_item(item):
+			# Item is not in the model.
+			return false
+	# All items are in the model, this model matches.
+	return true
+
+## Returns true if the model contains this text somewhere.
+## Item should be lowercase.
+func _contains_text_item(item: String) -> bool:
+	if name.to_lower().contains(item) || directory.to_lower().contains(item):
 		return true
 	
 	for file in files:
-		if file.contains(text):
+		if file.to_lower().contains(item):
 			return true
 	
 	return false
