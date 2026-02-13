@@ -13,7 +13,7 @@ func display_model(new_model: Model):
 	
 	%NameLabel.text = model.name
 	if model.cover_image != null:
-		%CoverImage.icon = model.cover_image
+		%CoverImage.texture = model.cover_image
 	
 	for child in printables_list.get_children():
 		printables_list.remove_child(child)
@@ -30,9 +30,14 @@ func display_model(new_model: Model):
 			_add_file_to_rest_list(file)
 
 func _add_file_to_printables(file: String):
-	var label := Label.new()
-	label.text = file
-	printables_list.add_child(label)
+	var button := Button.new()
+	button.text = file
+	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	button.clip_text = true
+	button.flat = true
+	button.pressed.connect(_on_printable_clicked.bind(file))
+	
+	printables_list.add_child(button)
 
 func _add_file_to_rest_list(file: String):
 	var label := Label.new()
@@ -45,3 +50,10 @@ func _is_file_printable(file: String) -> bool:
 			return true
 	
 	return false
+
+func _on_printable_clicked(file: String):
+	var full_path := "%s/%s" % [model.directory, file]
+	
+	var result = STLIO.Importer.LoadFromPath(full_path)
+	if result is ArrayMesh:
+		print("Yes")

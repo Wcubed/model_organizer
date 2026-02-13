@@ -30,7 +30,7 @@ layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 
-[node name="CoverImage" type="Button" parent="VBoxContainer/ImageContainer" unique_id=1639532480]
+[node name="CoverImage" type="TextureRect" parent="VBoxContainer/ImageContainer" unique_id=1240338193]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -42,6 +42,7 @@ size_flags_vertical = 3
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer" unique_id=914835356]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 0
 
 [node name="PrintablesList" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/VBoxContainer" unique_id=1047582525]
 unique_name_in_owner = true
