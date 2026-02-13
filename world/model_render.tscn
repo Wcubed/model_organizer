@@ -13,16 +13,17 @@ script = ExtResource("1_c33fe")
 environment = ExtResource("2_4ydpa")
 
 [node name="CameraAnchor" type="Node3D" parent="." unique_id=402891599]
-transform = Transform3D(0.99999994, 0, 0, 0, 0.7071067, 0.7071067, 0, -0.7071067, 0.7071067, 0, 0, 0)
+unique_name_in_owner = true
+transform = Transform3D(0.8535531, 0.14644659, -0.49999988, -0.49999985, 0.49999988, -0.70710665, 0.14644659, 0.8535531, 0.49999988, 0, 0, 0)
 
 [node name="Camera3D" type="Camera3D" parent="CameraAnchor" unique_id=1472047281]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.9683704)
 
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="CameraAnchor" unique_id=1085592398]
+transform = Transform3D(0.81086975, 0.32810092, -0.48460305, -0.4138178, 0.9069816, -0.07835457, 0.4138178, 0.26407275, 0.87121785, -1.9852785, -0.768767, 3.329545)
+
 [node name="Model" type="MeshInstance3D" parent="." unique_id=2002218616]
 unique_name_in_owner = true
 material_override = ExtResource("3_nea5t")
 mesh = SubResource("BoxMesh_4ydpa")
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1085592398]
-transform = Transform3D(0.81086975, 0.3281009, -0.48460305, 0, 0.8280604, 0.56063896, 0.5852267, -0.45460522, 0.67144907, -1.9852785, 1.8107433, 2.897944)

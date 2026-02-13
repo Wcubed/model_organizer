@@ -8,3 +8,5 @@ sky_material = SubResource("PanoramaSkyMaterial_sxln6")
 [resource]
 background_energy_multiplier = 0.0
 sky = SubResource("Sky_ard8h")
+ambient_light_source = 2
+ambient_light_color = Color(0.4045111, 0.40451115, 0.4045111, 1)
