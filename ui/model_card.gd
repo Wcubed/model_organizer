@@ -9,10 +9,9 @@ func _ready() -> void:
 	
 	%Name.text = model.name
 	
-	if !model.cover_image.is_empty():
-		var image = Image.new()
-		var err := image.load(model.cover_image)
-		
-		if err == OK:
-			var texture = ImageTexture.create_from_image(image)
-			%CoverImage.texture = texture
+	if model.cover_image != null:
+		%CoverImage.texture = model.cover_image
+
+
+func _on_open_button_pressed() -> void:
+	OS.shell_open(model.directory)

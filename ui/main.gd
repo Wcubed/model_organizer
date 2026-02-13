@@ -1,5 +1,6 @@
 extends PanelContainer
 
+@onready var amount_label := %AmountLabel
 @onready var folder_dialog := $FolderDialog
 @onready var model_cards := %ModelCards
 
@@ -42,6 +43,8 @@ func scan_library():
 	
 	found_models.sort_custom(_sort_models_by_name)
 	models = found_models
+	
+	amount_label.text = "%s models" % models.size()
 	
 	refresh_model_cards()
 
@@ -98,4 +101,8 @@ func _on_folder_dialog_dir_selected(dir: String) -> void:
 	folder_dialog.current_dir = dir
 	
 	save_settings()
+	scan_library()
+
+
+func _on_reload_button_pressed() -> void:
 	scan_library()
