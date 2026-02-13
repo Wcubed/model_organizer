@@ -37,6 +37,6 @@ func _input(event: InputEvent) -> void:
 		camera.position.z = min(camera.position.z, max_zoom_distance)
 	elif event is InputEventMouseMotion && Input.is_mouse_button_pressed(MouseButton.MOUSE_BUTTON_LEFT):
 		camera_anchor.rotation_degrees.z += event.screen_relative.x
-		camera_anchor.rotation_degrees.x = max(min(camera_anchor.rotation_degrees.x + event.screen_relative.y, 90), 0)
+		camera_anchor.rotation_degrees.x = max(min(camera_anchor.rotation_degrees.x + event.screen_relative.y, 180), 0)
 		
 		print(camera_anchor.rotation_degrees)

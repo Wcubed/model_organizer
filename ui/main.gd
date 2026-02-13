@@ -151,5 +151,5 @@ func _on_clear_search_button_pressed() -> void:
 	run_search_and_display()
 
 
-func _on_model_info_view_show_array_mesh(mesh: ArrayMesh) -> void:
-	view_3d_model.show_mesh(mesh)
+func _on_model_info_view_show_array_mesh(mesh: ArrayMesh, path: String) -> void:
+	view_3d_model.show_mesh(mesh, path)

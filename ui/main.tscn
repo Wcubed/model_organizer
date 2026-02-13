@@ -61,6 +61,7 @@ size_flags_horizontal = 3
 placeholder_text = "Search"
 
 [node name="ClearSearchButton" type="Button" parent="SplitContainer/MainContainer/LibraryView/PanelContainer/Toolbar" unique_id=1014391993]
+custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 tooltip_text = "Clear searchbar"
 text = "X"
@@ -118,7 +119,7 @@ deleting_enabled = false
 
 [connection signal="pressed" from="SplitContainer/MainContainer/LibraryView/PanelContainer/Toolbar/PathButton" to="." method="_on_path_button_pressed"]
 [connection signal="pressed" from="SplitContainer/MainContainer/LibraryView/PanelContainer/Toolbar/ReloadButton" to="." method="_on_reload_button_pressed"]
-[connection signal="text_changed" from="SplitContainer/MainContainer/LibraryView/PanelContainer/Toolbar/SearchEdit" to="." method="_on_search_edit_text_changed"]
+[connection signal="text_submitted" from="SplitContainer/MainContainer/LibraryView/PanelContainer/Toolbar/SearchEdit" to="." method="_on_search_edit_text_changed"]
 [connection signal="pressed" from="SplitContainer/MainContainer/LibraryView/PanelContainer/Toolbar/ClearSearchButton" to="." method="_on_clear_search_button_pressed"]
 [connection signal="show_array_mesh" from="SplitContainer/ModelInfoView" to="." method="_on_model_info_view_show_array_mesh"]
 [connection signal="dir_selected" from="FolderDialog" to="." method="_on_folder_dialog_dir_selected"]

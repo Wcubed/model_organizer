@@ -1,6 +1,6 @@
 extends PanelContainer
 
-signal show_array_mesh(mesh: ArrayMesh)
+signal show_array_mesh(mesh: ArrayMesh, path: String)
 
 var model: Model = null
 
@@ -60,4 +60,4 @@ func _on_printable_clicked(file: String):
 	
 	var result = STLIO.Importer.LoadFromPath(full_path)
 	if result is ArrayMesh:
-		show_array_mesh.emit(result)
+		show_array_mesh.emit(result, full_path)
