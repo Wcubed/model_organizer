@@ -8,7 +8,7 @@ extends PanelContainer
 var model_card_scene := preload("res://ui/model_card.tscn")
 
 ## List of extensions that will be ignored when checking if a folder contains models.
-var ignored_extensions := PackedStringArray([".zip", ".rar", ".orynt3d"])
+var ignored_extensions := PackedStringArray([".zip", ".rar", ".orynt3d", ".md", ".txt"])
 var config_file_name := "user://config.cfg"
 var library_dir: String = ""
 
@@ -67,6 +67,16 @@ func scan_directory(path: String, found_models: Array[Model]):
 	else:
 		# Might contain sub directories
 		var subdirs = dir.get_directories()
+		
+		# First check if this is a "thingyverse" folder structure.
+		for subdir in subdirs:
+			if subdir.to_lower() == "files":
+				# Thingyverse.
+				var new_model = Model.new(path)
+				new_model.scan_directory()
+				found_models.append(new_model)
+				return
+		
 		for subdir in subdirs:
 			var new_path = "%s/%s" % [path, subdir]
 			scan_directory(new_path, found_models)
