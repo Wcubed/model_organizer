@@ -17,6 +17,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
+mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxFlat_1133u")
 script = ExtResource("1_v1j2q")
 
@@ -30,10 +31,12 @@ custom_minimum_size = Vector2(300, 300)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+mouse_filter = 1
 
 [node name="CoverImage" type="Button" parent="VBoxContainer/ImageContainer" unique_id=1593697769]
 unique_name_in_owner = true
 layout_mode = 2
+mouse_filter = 1
 mouse_default_cursor_shape = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer" unique_id=1864008009]

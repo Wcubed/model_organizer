@@ -27,5 +27,9 @@ func _on_open_external_button_pressed() -> void:
 
 
 func _gui_input(event: InputEvent) -> void:
+	if !visible:
+		return
+	
 	if event.is_action("ui_back"):
 		hide_mesh()
+		accept_event()

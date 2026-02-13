@@ -39,6 +39,7 @@ size_flags_stretch_ratio = 3.0
 
 [node name="PanelContainer" type="PanelContainer" parent="SplitContainer/MainContainer/LibraryView" unique_id=1620717272]
 layout_mode = 2
+mouse_filter = 1
 theme_override_styles/panel = ExtResource("2_loxbi")
 
 [node name="Toolbar" type="HBoxContainer" parent="SplitContainer/MainContainer/LibraryView/PanelContainer" unique_id=1912392673]
@@ -62,7 +63,7 @@ placeholder_text = "Search"
 
 [node name="SearchEditDebounce" type="Timer" parent="SplitContainer/MainContainer/LibraryView/PanelContainer/Toolbar/SearchEdit" unique_id=1897580493]
 unique_name_in_owner = true
-wait_time = 0.5
+wait_time = 0.3
 one_shot = true
 
 [node name="ClearSearchButton" type="Button" parent="SplitContainer/MainContainer/LibraryView/PanelContainer/Toolbar" unique_id=1014391993]
@@ -79,6 +80,7 @@ text = "100"
 [node name="PanelContainer2" type="PanelContainer" parent="SplitContainer/MainContainer/LibraryView" unique_id=1683110704]
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 1
 
 [node name="ScrollContainer" type="ScrollContainer" parent="SplitContainer/MainContainer/LibraryView/PanelContainer2" unique_id=642941488]
 layout_mode = 2

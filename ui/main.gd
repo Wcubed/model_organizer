@@ -110,6 +110,17 @@ func run_search_and_display():
 		new_card.show_model_info.connect(_user_requests_show_model_info)
 		model_cards.add_child(new_card)
 
+func clear_and_select_search():
+	var previous_text = search_edit.text
+	search_edit.text = ""
+	search_edit_debounce.stop()
+	
+	# No need to change the display if the search hasn't changed.
+	if previous_text != search_edit.text:
+		run_search_and_display()
+	
+	search_edit.grab_focus()
+
 ## Returns true if the file should be included, false otherwise.
 func _filter_ignored_files(file: String) -> bool:
 	for extension in ignored_extensions:
@@ -149,9 +160,7 @@ func _on_search_edit_text_changed(_new_text: String) -> void:
 
 
 func _on_clear_search_button_pressed() -> void:
-	search_edit.text = ""
-	search_edit_debounce.stop()
-	run_search_and_display()
+	clear_and_select_search()
 
 
 func _on_model_info_view_show_array_mesh(mesh: ArrayMesh, path: String) -> void:
@@ -160,3 +169,9 @@ func _on_model_info_view_show_array_mesh(mesh: ArrayMesh, path: String) -> void:
 
 func _on_search_edit_debounce_timeout() -> void:
 	run_search_and_display()
+
+
+func _gui_input(event: InputEvent) -> void:
+	if event.is_action("ui_back"):
+		clear_and_select_search()
+		accept_event()

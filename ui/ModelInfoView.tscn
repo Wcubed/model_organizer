@@ -13,6 +13,7 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.5
+mouse_filter = 1
 theme_override_styles/panel = ExtResource("1_i757p")
 script = ExtResource("2_pl1ku")
 
@@ -39,6 +40,7 @@ custom_minimum_size = Vector2(300, 300)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
+mouse_filter = 1
 
 [node name="CoverImage" type="TextureRect" parent="VBoxContainer/ScrollContainer/VBoxContainer/ImageContainer" unique_id=1240338193]
 unique_name_in_owner = true

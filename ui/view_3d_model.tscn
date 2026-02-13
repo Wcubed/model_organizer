@@ -29,6 +29,7 @@ layout_mode = 2
 
 [node name="PanelContainer" type="PanelContainer" parent="VBoxContainer" unique_id=518991609]
 layout_mode = 2
+mouse_filter = 1
 theme_override_styles/panel = ExtResource("1_6moto")
 
 [node name="Toolbar" type="HBoxContainer" parent="VBoxContainer/PanelContainer" unique_id=992223523]
@@ -37,6 +38,7 @@ layout_mode = 2
 [node name="Spacer" type="Control" parent="VBoxContainer/PanelContainer/Toolbar" unique_id=1553302586]
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_filter = 1
 
 [node name="OpenExternalButton" type="Button" parent="VBoxContainer/PanelContainer/Toolbar" unique_id=1575891301]
 custom_minimum_size = Vector2(50, 0)
