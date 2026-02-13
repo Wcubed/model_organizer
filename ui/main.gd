@@ -6,6 +6,7 @@ extends PanelContainer
 @onready var model_cards := %ModelCards
 @onready var model_info_view := %ModelInfoView
 @onready var view_3d_model := %View3dModel
+@onready var search_edit_debounce := %SearchEditDebounce
 
 var model_card_scene := preload("res://ui/model_card.tscn")
 
@@ -143,13 +144,19 @@ func _on_reload_button_pressed() -> void:
 
 
 func _on_search_edit_text_changed(_new_text: String) -> void:
-	run_search_and_display()
+	# When the debounce timer runs out without being restarted, the actual search is performed.
+	search_edit_debounce.start()
 
 
 func _on_clear_search_button_pressed() -> void:
 	search_edit.text = ""
+	search_edit_debounce.stop()
 	run_search_and_display()
 
 
 func _on_model_info_view_show_array_mesh(mesh: ArrayMesh, path: String) -> void:
 	view_3d_model.show_mesh(mesh, path)
+
+
+func _on_search_edit_debounce_timeout() -> void:
+	run_search_and_display()
