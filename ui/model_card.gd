@@ -8,3 +8,11 @@ func _ready() -> void:
 		return
 	
 	%Name.text = model.name
+	
+	if !model.cover_image.is_empty():
+		var image = Image.new()
+		var err := image.load(model.cover_image)
+		
+		if err == OK:
+			var texture = ImageTexture.create_from_image(image)
+			%CoverImage.texture = texture

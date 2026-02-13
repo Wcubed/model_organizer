@@ -13,12 +13,16 @@ script = ExtResource("1_v1j2q")
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=268130598]
 layout_mode = 2
 
-[node name="ColorRect" type="ColorRect" parent="VBoxContainer" unique_id=1371519885]
-custom_minimum_size = Vector2(200, 200)
+[node name="Container" type="PanelContainer" parent="VBoxContainer" unique_id=1252887222]
+custom_minimum_size = Vector2(300, 300)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-color = Color(0.84751576, 0.54441905, 0.5297068, 1)
+
+[node name="CoverImage" type="TextureRect" parent="VBoxContainer/Container" unique_id=1657426576]
+unique_name_in_owner = true
+layout_mode = 2
+expand_mode = 4
 
 [node name="Name" type="Label" parent="VBoxContainer" unique_id=695506317]
 unique_name_in_owner = true

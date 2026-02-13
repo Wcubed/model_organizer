@@ -55,8 +55,9 @@ func scan_directory(path: String, found_models: Array[Model]):
 	files = files.filter(_filter_ignored_files)
 	
 	if files.size() > 0:
-		# Model directory
+		# This is a model directory
 		var new_model = Model.new(path)
+		new_model.scan_directory()
 		found_models.append(new_model)
 	else:
 		# Might contain sub directories
