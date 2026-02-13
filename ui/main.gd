@@ -158,6 +158,10 @@ func _on_search_edit_text_changed(_new_text: String) -> void:
 	# When the debounce timer runs out without being restarted, the actual search is performed.
 	search_edit_debounce.start()
 
+func _on_search_edit_text_submitted(_new_text: String) -> void:
+	search_edit_debounce.stop()
+	run_search_and_display()
+
 
 func _on_clear_search_button_pressed() -> void:
 	clear_and_select_search()

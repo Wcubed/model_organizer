@@ -127,6 +127,7 @@ deleting_enabled = false
 [connection signal="pressed" from="SplitContainer/MainContainer/LibraryView/PanelContainer/Toolbar/PathButton" to="." method="_on_path_button_pressed"]
 [connection signal="pressed" from="SplitContainer/MainContainer/LibraryView/PanelContainer/Toolbar/ReloadButton" to="." method="_on_reload_button_pressed"]
 [connection signal="text_changed" from="SplitContainer/MainContainer/LibraryView/PanelContainer/Toolbar/SearchEdit" to="." method="_on_search_edit_text_changed"]
+[connection signal="text_submitted" from="SplitContainer/MainContainer/LibraryView/PanelContainer/Toolbar/SearchEdit" to="." method="_on_search_edit_text_submitted"]
 [connection signal="timeout" from="SplitContainer/MainContainer/LibraryView/PanelContainer/Toolbar/SearchEdit/SearchEditDebounce" to="." method="_on_search_edit_debounce_timeout"]
 [connection signal="pressed" from="SplitContainer/MainContainer/LibraryView/PanelContainer/Toolbar/ClearSearchButton" to="." method="_on_clear_search_button_pressed"]
 [connection signal="show_array_mesh" from="SplitContainer/ModelInfoView" to="." method="_on_model_info_view_show_array_mesh"]

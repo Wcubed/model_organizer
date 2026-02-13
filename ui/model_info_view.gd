@@ -9,6 +9,7 @@ var printable_file_extensions := [".stl", ".3mf"]
 
 @onready var printables_list := %PrintablesList
 @onready var rest_list := %RestList
+@onready var printable_entry_scene := preload("res://ui/printable_entry_line.tscn")
 
 func display_model(new_model: Model):
 	model = new_model
@@ -32,16 +33,11 @@ func display_model(new_model: Model):
 			_add_file_to_rest_list(file)
 
 func _add_file_to_printables(file: String):
-	var button := Button.new()
-	# Show only the filename, with the full path in the tooltip.
-	button.text = file.split("/")[-1]
-	button.tooltip_text = file.trim_prefix("/")
-	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	button.flat = true
-	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	button.pressed.connect(_on_printable_clicked.bind(file))
+	var entry := printable_entry_scene.instantiate()
+	entry.display_file("%s/%s" % [model.directory, file])
+	entry.preview_printable.connect(_on_printable_clicked)
 	
-	printables_list.add_child(button)
+	printables_list.add_child(entry)
 
 func _add_file_to_rest_list(file: String):
 	var label := Label.new()
@@ -55,9 +51,11 @@ func _is_file_printable(file: String) -> bool:
 	
 	return false
 
-func _on_printable_clicked(file: String):
-	var full_path := "%s/%s" % [model.directory, file]
+func _on_printable_clicked(absolute_file: String, control: Control):
+	for child in printables_list.get_children():
+		child.show_selected(false)
+	control.show_selected(true)
 	
-	var result = STLIO.Importer.LoadFromPath(full_path)
+	var result = STLIO.Importer.LoadFromPath(absolute_file)
 	if result is ArrayMesh:
-		show_array_mesh.emit(result, full_path)
+		show_array_mesh.emit(result, absolute_file)
