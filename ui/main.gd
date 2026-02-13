@@ -7,12 +7,30 @@ var model_card_scene := preload("res://ui/model_card.tscn")
 
 ## List of extensions that will be ignored when checking if a folder contains models.
 var ignored_extensions := PackedStringArray([".zip", ".rar", ".orynt3d"])
+var config_file_name := "user://config.cfg"
 var library_dir: String = ""
 ## All the models found in the library.
 var models: Array[Model] = []
 
 func _ready() -> void:
+	load_settings()
 	scan_library()
+
+func save_settings():
+	var config = ConfigFile.new()
+	config.set_value("main", "library_dir", library_dir)
+	
+	config.save(config_file_name)
+
+
+func load_settings():
+	var config = ConfigFile.new()
+	var err = config.load(config_file_name)
+	if err != OK:
+		return
+	
+	library_dir = config.get_value("main", "library_dir", "")
+
 
 func scan_library():
 	if library_dir.is_empty():
@@ -77,4 +95,6 @@ func _on_path_button_pressed() -> void:
 func _on_folder_dialog_dir_selected(dir: String) -> void:
 	library_dir = dir
 	folder_dialog.current_dir = dir
+	
+	save_settings()
 	scan_library()
