@@ -27,8 +27,7 @@ func scan_directory():
 	
 	_scan_subdirectory(directory, "")
 	
-	_find_cover_image()
-	_load_cover_image()
+	_find_and_load_cover_image()
 
 ## Returns true if the model matches the search parameters.
 func matches_search(search_text: String) -> bool:
@@ -56,20 +55,24 @@ func _contains_text_item(item: String) -> bool:
 	
 	return false
 
-func _find_cover_image():
+func _find_and_load_cover_image():
 	# See if we can find a cover image.
 	for file in files:
 		for extension in supported_image_extensions:
 			if file.ends_with(extension):
 				cover_image_path = file
-				return
+				
+				if _load_cover_image() == OK:
+					# Cover image loaded ok. Else we try the next one.
+					return
 	
 	# No cover image.
 	cover_image_path = ""
 
-func _load_cover_image():
+## Returns OK if the load was successful.
+func _load_cover_image() -> int:
 	if cover_image_path.is_empty():
-		return
+		return FAILED
 	
 	var image = Image.new()
 	var err := image.load("%s/%s" % [directory, cover_image_path])
@@ -89,6 +92,8 @@ func _load_cover_image():
 		image.resize(new_width, new_height, Image.INTERPOLATE_BILINEAR)
 		
 		cover_image = ImageTexture.create_from_image(image)
+	
+	return err
 
 func _scan_subdirectory(base_path: String, subdir: String):
 	var dir = DirAccess.open("%s/%s" % [base_path, subdir])
