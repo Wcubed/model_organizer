@@ -4,6 +4,7 @@ extends PanelContainer
 @onready var search_edit := %SearchEdit
 @onready var folder_dialog := $FolderDialog
 @onready var model_cards := %ModelCards
+@onready var model_info_view := %ModelInfoView
 
 var model_card_scene := preload("res://ui/model_card.tscn")
 
@@ -104,6 +105,7 @@ func run_search_and_display():
 	for model in searched_models:
 		var new_card = model_card_scene.instantiate()
 		new_card.model = model
+		new_card.show_model_info.connect(_user_requests_show_model_info)
 		model_cards.add_child(new_card)
 
 ## Returns true if the file should be included, false otherwise.
@@ -117,6 +119,11 @@ func _filter_ignored_files(file: String) -> bool:
 
 func _sort_models_by_name(a: Model, b: Model) -> bool:
 	return a.name < b.name
+
+
+func _user_requests_show_model_info(model: Model):
+	model_info_view.display_model(model)
+
 
 func _on_path_button_pressed() -> void:
 	folder_dialog.show()

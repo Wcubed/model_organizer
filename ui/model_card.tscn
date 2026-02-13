@@ -26,16 +26,15 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 
 [node name="ImageContainer" type="PanelContainer" parent="VBoxContainer" unique_id=1252887222]
-unique_name_in_owner = true
 custom_minimum_size = Vector2(300, 300)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="CoverImage" type="TextureRect" parent="VBoxContainer/ImageContainer" unique_id=1657426576]
+[node name="CoverImage" type="Button" parent="VBoxContainer/ImageContainer" unique_id=1593697769]
 unique_name_in_owner = true
 layout_mode = 2
-expand_mode = 4
+mouse_default_cursor_shape = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer" unique_id=1864008009]
 layout_mode = 2
@@ -59,4 +58,5 @@ layout_mode = 2
 tooltip_text = "Open folder in default file manager."
 icon = ExtResource("2_1133u")
 
+[connection signal="pressed" from="VBoxContainer/ImageContainer/CoverImage" to="." method="_on_cover_image_pressed"]
 [connection signal="pressed" from="VBoxContainer/MarginContainer/HBoxContainer/OpenButton" to="." method="_on_open_button_pressed"]

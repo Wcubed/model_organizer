@@ -1,5 +1,7 @@
 extends PanelContainer
 
+signal show_model_info(Model)
+
 ## Set this before adding this node to the scene tree.
 @export var model: Model = null
 
@@ -10,8 +12,12 @@ func _ready() -> void:
 	%Name.text = model.name
 	
 	if model.cover_image != null:
-		%CoverImage.texture = model.cover_image
+		%CoverImage.icon = model.cover_image
 
 
 func _on_open_button_pressed() -> void:
 	OS.shell_open(model.directory)
+
+
+func _on_cover_image_pressed() -> void:
+	show_model_info.emit(model)

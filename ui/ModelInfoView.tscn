@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://dnxvxio1xc3kj"]
+
+[ext_resource type="StyleBox" uid="uid://dsm55rfa1xmm4" path="res://ui/assets/basic_panel.tres" id="1_i757p"]
+[ext_resource type="Script" uid="uid://bqc2u8semv3i6" path="res://ui/model_info_view.gd" id="2_pl1ku"]
+
+[node name="ModelInfoView" type="PanelContainer" unique_id=1478585159]
+custom_minimum_size = Vector2(200, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = ExtResource("1_i757p")
+script = ExtResource("2_pl1ku")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1644965546]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="VBoxContainer" unique_id=1478592964]
+unique_name_in_owner = true
+layout_mode = 2
+clip_text = true
+text_overrun_behavior = 1
+
+[node name="ImageContainer" type="PanelContainer" parent="VBoxContainer" unique_id=2096255779]
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="CoverImage" type="Button" parent="VBoxContainer/ImageContainer" unique_id=1639532480]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer" unique_id=37384423]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="FilesList" type="VBoxContainer" parent="VBoxContainer/ScrollContainer" unique_id=1047582525]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
