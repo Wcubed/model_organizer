@@ -1,6 +1,7 @@
 extends PanelContainer
 
 @onready var amount_label := %AmountLabel
+@onready var search_edit := %SearchEdit
 @onready var folder_dialog := $FolderDialog
 @onready var model_cards := %ModelCards
 
@@ -10,8 +11,11 @@ var model_card_scene := preload("res://ui/model_card.tscn")
 var ignored_extensions := PackedStringArray([".zip", ".rar", ".orynt3d"])
 var config_file_name := "user://config.cfg"
 var library_dir: String = ""
+
 ## All the models found in the library.
 var models: Array[Model] = []
+## All the models matching the search query.
+var searched_models: Array[Model] = []
 
 func _ready() -> void:
 	load_settings()
@@ -35,7 +39,7 @@ func load_settings():
 
 func scan_library():
 	if library_dir.is_empty():
-		refresh_model_cards()
+		run_search_and_display()
 		return
 	
 	var found_models: Array[Model] = []
@@ -46,7 +50,7 @@ func scan_library():
 	
 	amount_label.text = "%s models" % models.size()
 	
-	refresh_model_cards()
+	run_search_and_display()
 
 func scan_directory(path: String, found_models: Array[Model]):
 	var dir = DirAccess.open(path)
@@ -69,13 +73,24 @@ func scan_directory(path: String, found_models: Array[Model]):
 			var new_path = "%s/%s" % [path, subdir]
 			scan_directory(new_path, found_models)
 
+## Searches the models.
 ## Clears the model cards and displays the currently found models.
-func refresh_model_cards():
+func run_search_and_display():
+	var search_text: String = search_edit.text
+	
+	if search_text.is_empty():
+		searched_models = models
+	else:
+		searched_models = []
+		for model in models:
+			if model.matches_search(search_text):
+				searched_models.append(model)
+	
 	for card in model_cards.get_children():
 		model_cards.remove_child(card)
 		card.queue_free()
 	
-	for model in models:
+	for model in searched_models:
 		var new_card = model_card_scene.instantiate()
 		new_card.model = model
 		model_cards.add_child(new_card)
@@ -106,3 +121,12 @@ func _on_folder_dialog_dir_selected(dir: String) -> void:
 
 func _on_reload_button_pressed() -> void:
 	scan_library()
+
+
+func _on_search_edit_text_changed(new_text: String) -> void:
+	run_search_and_display()
+
+
+func _on_clear_search_button_pressed() -> void:
+	search_edit.text = ""
+	run_search_and_display()

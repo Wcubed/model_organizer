@@ -5,9 +5,9 @@ extends Resource
 
 @export var directory: String
 @export var name: String
-## Absolute path of all files found in the directory.
+## Relative path of all files found in the directory.
 @export var files: Array[String]
-## Absolute path to the cover image.
+## Relative path to the cover image.
 @export var cover_image_path: String = ""
 ## Cover image, if available
 @export var cover_image: ImageTexture = null
@@ -25,10 +25,21 @@ func scan_directory():
 	cover_image_path = ""
 	cover_image = null
 	
-	_scan_subdirectory(directory)
+	_scan_subdirectory(directory, "")
 	
 	_find_cover_image()
 	_load_cover_image()
+
+## Returns true if the model matches the search parameters.
+func matches_search(text: String) -> bool:
+	if name.contains(text) || directory.contains(text):
+		return true
+	
+	for file in files:
+		if file.contains(text):
+			return true
+	
+	return false
 
 func _find_cover_image():
 	# See if we can find a cover image.
@@ -46,7 +57,7 @@ func _load_cover_image():
 		return
 	
 	var image = Image.new()
-	var err := image.load(cover_image_path)
+	var err := image.load("%s/%s" % [directory, cover_image_path])
 	
 	if err == OK:
 		# Scale the image to fit to the expected size
@@ -64,18 +75,18 @@ func _load_cover_image():
 		
 		cover_image = ImageTexture.create_from_image(image)
 
-func _scan_subdirectory(path: String):
-	var dir = DirAccess.open(path)
+func _scan_subdirectory(base_path: String, subdir: String):
+	var dir = DirAccess.open("%s/%s" % [base_path, subdir])
 	if !dir:
 		return
 	
 	# Directory exists. Scan it.
 	var new_files = Array(dir.get_files())
 	for file in new_files:
-		files.append("%s/%s" % [path, file])
+		files.append("%s/%s" % [subdir, file])
 	
 	# Scan subdirectories
 	var subdirs = dir.get_directories()
-	for subdir in subdirs:
-		var new_path = "%s/%s" % [path, subdir]
-		_scan_subdirectory(new_path)
+	for new_dir in subdirs:
+		var new_subdir = "%s/%s" % [subdir, new_dir]
+		_scan_subdirectory(base_path, new_subdir)
