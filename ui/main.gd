@@ -5,6 +5,7 @@ extends PanelContainer
 @onready var folder_dialog := $FolderDialog
 @onready var model_cards := %ModelCards
 @onready var model_info_view := %ModelInfoView
+@onready var view_3d_model := %View3dModel
 
 var model_card_scene := preload("res://ui/model_card.tscn")
 
@@ -111,7 +112,7 @@ func run_search_and_display():
 ## Returns true if the file should be included, false otherwise.
 func _filter_ignored_files(file: String) -> bool:
 	for extension in ignored_extensions:
-		if file.ends_with(extension):
+		if file.to_lower().ends_with(extension):
 			return false
 	
 	return true
@@ -148,3 +149,7 @@ func _on_search_edit_text_changed(_new_text: String) -> void:
 func _on_clear_search_button_pressed() -> void:
 	search_edit.text = ""
 	run_search_and_display()
+
+
+func _on_model_info_view_show_array_mesh(mesh: ArrayMesh) -> void:
+	view_3d_model.show_mesh(mesh)

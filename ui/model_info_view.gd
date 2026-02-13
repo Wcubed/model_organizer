@@ -1,5 +1,7 @@
 extends PanelContainer
 
+signal show_array_mesh(mesh: ArrayMesh)
+
 var model: Model = null
 
 ## These extensions can be put on the 3d printer. Others can't.
@@ -31,22 +33,24 @@ func display_model(new_model: Model):
 
 func _add_file_to_printables(file: String):
 	var button := Button.new()
-	button.text = file
+	# Show only the filename, with the full path in the tooltip.
+	button.text = file.split("/")[-1]
+	button.tooltip_text = file.trim_prefix("/")
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	button.clip_text = true
 	button.flat = true
+	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	button.pressed.connect(_on_printable_clicked.bind(file))
 	
 	printables_list.add_child(button)
 
 func _add_file_to_rest_list(file: String):
 	var label := Label.new()
-	label.text = file
+	label.text = file.trim_prefix("/")
 	rest_list.add_child(label)
 
 func _is_file_printable(file: String) -> bool:
 	for extension in printable_file_extensions:
-		if file.ends_with(extension):
+		if file.to_lower().ends_with(extension):
 			return true
 	
 	return false
@@ -56,4 +60,4 @@ func _on_printable_clicked(file: String):
 	
 	var result = STLIO.Importer.LoadFromPath(full_path)
 	if result is ArrayMesh:
-		print("Yes")
+		show_array_mesh.emit(result)

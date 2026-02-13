@@ -1,6 +1,6 @@
 extends PanelContainer
 
-signal show_model_info(Model)
+signal show_model_info(model: Model)
 
 ## Set this before adding this node to the scene tree.
 @export var model: Model = null
