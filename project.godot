@@ -13,6 +13,7 @@ config_version=5
 config/name="model_organizer"
 run/main_scene="uid://t81jd6joigqr"
 config/features=PackedStringArray("4.6", "Mobile")
+run/low_processor_mode=true
 config/icon="res://icon.svg"
 
 [physics]

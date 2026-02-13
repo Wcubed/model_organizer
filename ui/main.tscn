@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://t81jd6joigqr"]
 
 [ext_resource type="Script" uid="uid://c3nmdkiwphxe1" path="res://ui/main.gd" id="1_fblgx"]
+[ext_resource type="PackedScene" uid="uid://bewt4od0yhro6" path="res://ui/model_card.tscn" id="2_vcrq8"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8blns"]
 content_margin_left = 5.0
@@ -34,6 +35,27 @@ text = "..."
 [node name="PanelContainer2" type="PanelContainer" parent="VBoxContainer" unique_id=1683110704]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/PanelContainer2" unique_id=642941488]
+layout_mode = 2
+follow_focus = true
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 2
+scroll_hint_mode = 1
+
+[node name="ModelCards" type="HFlowContainer" parent="VBoxContainer/PanelContainer2/ScrollContainer" unique_id=2004963902]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ModelCard" parent="VBoxContainer/PanelContainer2/ScrollContainer/ModelCards" unique_id=1605879074 instance=ExtResource("2_vcrq8")]
+layout_mode = 2
+
+[node name="ModelCard2" parent="VBoxContainer/PanelContainer2/ScrollContainer/ModelCards" unique_id=953661120 instance=ExtResource("2_vcrq8")]
+layout_mode = 2
+
+[node name="ModelCard3" parent="VBoxContainer/PanelContainer2/ScrollContainer/ModelCards" unique_id=367025810 instance=ExtResource("2_vcrq8")]
+layout_mode = 2
 
 [node name="FolderDialog" type="FileDialog" parent="." unique_id=1589698455]
 oversampling_override = 1.0
