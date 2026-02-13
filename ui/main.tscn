@@ -59,7 +59,7 @@ layout_mode = 2
 
 [node name="FolderDialog" type="FileDialog" parent="." unique_id=1589698455]
 oversampling_override = 1.0
-title = "Select Library Folder"
+title = "Open a Directory"
 initial_position = 1
 size = Vector2i(1000, 500)
 file_mode = 2

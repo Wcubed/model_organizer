@@ -8,7 +8,8 @@ var model_card_scene := preload("res://ui/model_card.tscn")
 ## List of extensions that will be ignored when checking if a folder contains models.
 var ignored_extensions := PackedStringArray([".zip", ".rar", ".orynt3d"])
 var library_dir: String = ""
-var model_dirs := PackedStringArray()
+## All the models found in the library.
+var models: Array[Model] = []
 
 func _ready() -> void:
 	scan_library()
@@ -18,14 +19,14 @@ func scan_library():
 		refresh_model_cards()
 		return
 	
-	var found_model_dirs := PackedStringArray()
-	scan_directory(library_dir, found_model_dirs)
+	var found_models: Array[Model] = []
+	scan_directory(library_dir, found_models)
 	
-	model_dirs = found_model_dirs
+	models = found_models
 	
 	refresh_model_cards()
 
-func scan_directory(path: String, found_model_dirs: PackedStringArray):
+func scan_directory(path: String, found_models: Array[Model]):
 	var dir = DirAccess.open(path)
 	if !dir:
 		return
@@ -36,13 +37,14 @@ func scan_directory(path: String, found_model_dirs: PackedStringArray):
 	
 	if files.size() > 0:
 		# Model directory
-		found_model_dirs.append(path)
+		var new_model = Model.new(path)
+		found_models.append(new_model)
 	else:
 		# Might contain sub directories
 		var subdirs = dir.get_directories()
 		for subdir in subdirs:
 			var new_path = "%s/%s" % [path, subdir]
-			scan_directory(new_path, found_model_dirs)
+			scan_directory(new_path, found_models)
 
 ## Clears the model cards and displays the currently found models.
 func refresh_model_cards():
@@ -50,8 +52,9 @@ func refresh_model_cards():
 		model_cards.remove_child(card)
 		card.queue_free()
 	
-	for model in model_dirs:
+	for model in models:
 		var new_card = model_card_scene.instantiate()
+		new_card.model = model
 		model_cards.add_child(new_card)
 
 ## Returns true if the file should be included, false otherwise.
