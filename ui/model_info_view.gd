@@ -54,8 +54,8 @@ func _is_file_printable(file: String) -> bool:
 func _on_printable_clicked(absolute_file: String, control: Control):
 	for child in printables_list.get_children():
 		child.show_selected(false)
-	control.show_selected(true)
 	
 	var result = STLIO.Importer.LoadFromPath(absolute_file)
 	if result is ArrayMesh:
 		show_array_mesh.emit(result, absolute_file)
+		control.show_selected(true)

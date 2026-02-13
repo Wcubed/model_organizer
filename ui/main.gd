@@ -164,6 +164,7 @@ func _on_search_edit_text_submitted(_new_text: String) -> void:
 
 
 func _on_clear_search_button_pressed() -> void:
+	view_3d_model.hide_mesh()
 	clear_and_select_search()
 
 
@@ -173,6 +174,9 @@ func _on_model_info_view_show_array_mesh(mesh: ArrayMesh, path: String) -> void:
 
 func _on_search_edit_debounce_timeout() -> void:
 	run_search_and_display()
+
+func _on_search_edit_focus_entered() -> void:
+	view_3d_model.hide()
 
 
 func _gui_input(event: InputEvent) -> void:
