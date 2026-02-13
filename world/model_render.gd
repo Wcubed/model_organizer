@@ -1,5 +1,7 @@
 extends Node3D
 
+## Z is 'up' in most models, so the camera angle is a bit weird for godots standard.
+var anchor_start_angle := Vector3(60, 0, 45)
 ## This one is going to be calculated when loading the mesh.
 var min_zoom_distance := 1.0
 ## This one is going to be calculated when loading the mesh.
@@ -10,8 +12,6 @@ var zoom_speed_factor := 0.1
 @onready var model := %Model
 @onready var camera := %Camera3D
 @onready var camera_anchor := %CameraAnchor
-## Z is 'up' in most models, so the camera angle is a bit weird for godots standard.
-@onready var anchor_start_angle: Vector3 = camera_anchor.rotation_degrees
 
 func show_model(mesh: ArrayMesh):
 	model.mesh = mesh
@@ -38,5 +38,3 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventMouseMotion && Input.is_mouse_button_pressed(MouseButton.MOUSE_BUTTON_LEFT):
 		camera_anchor.rotation_degrees.z += event.screen_relative.x
 		camera_anchor.rotation_degrees.x = max(min(camera_anchor.rotation_degrees.x + event.screen_relative.y, 180), 0)
-		
-		print(camera_anchor.rotation_degrees)
