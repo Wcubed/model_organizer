@@ -14,8 +14,7 @@ func display_model(new_model: Model):
 	model = new_model
 	
 	%NameLabel.text = model.name
-	if model.cover_image != null:
-		%CoverImage.texture = model.cover_image
+	%CoverImage.texture = model.cover_image
 	
 	for child in printables_list.get_children():
 		printables_list.remove_child(child)
