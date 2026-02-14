@@ -28,6 +28,10 @@ func show_model(mesh: ArrayMesh):
 	camera_anchor.rotation_degrees = anchor_start_angle
 
 
+func remove_model():
+	model.mesh = null
+
+
 func _input(event: InputEvent) -> void:
 	if event.is_action("zoom_in"):
 		camera.position.z -= camera.position.z * zoom_speed_factor

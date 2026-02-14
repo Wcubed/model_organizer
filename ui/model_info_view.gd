@@ -1,6 +1,6 @@
 extends PanelContainer
 
-signal show_array_mesh(mesh: ArrayMesh, path: String)
+signal show_3d_file(absolute_path: String)
 
 var model: Model = null
 
@@ -32,12 +32,16 @@ func display_model(new_model: Model):
 		else:
 			_add_file_to_rest_list(file)
 
+func clear_printable_selection():
+	for child in printables_list.get_children():
+		child.show_selected(false)
+
 func _add_file_to_printables(file: String):
 	var entry := printable_entry_scene.instantiate()
+	printables_list.add_child(entry)
+	
 	entry.display_file("%s/%s" % [model.directory, file])
 	entry.preview_printable.connect(_on_printable_clicked)
-	
-	printables_list.add_child(entry)
 
 func _add_file_to_rest_list(file: String):
 	var label := Label.new()
@@ -52,10 +56,7 @@ func _is_file_printable(file: String) -> bool:
 	return false
 
 func _on_printable_clicked(absolute_file: String, control: Control):
-	for child in printables_list.get_children():
-		child.show_selected(false)
+	clear_printable_selection()
+	control.show_selected(true)
 	
-	var result = STLIO.Importer.LoadFromPath(absolute_file)
-	if result is ArrayMesh:
-		show_array_mesh.emit(result, absolute_file)
-		control.show_selected(true)
+	show_3d_file.emit(absolute_file)

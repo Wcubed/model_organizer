@@ -133,5 +133,6 @@ deleting_enabled = false
 [connection signal="text_submitted" from="SplitContainer/MarginContainer/LibraryView/PanelContainer/Toolbar/SearchEdit" to="." method="_on_search_edit_text_submitted"]
 [connection signal="timeout" from="SplitContainer/MarginContainer/LibraryView/PanelContainer/Toolbar/SearchEdit/SearchEditDebounce" to="." method="_on_search_edit_debounce_timeout"]
 [connection signal="pressed" from="SplitContainer/MarginContainer/LibraryView/PanelContainer/Toolbar/ClearSearchButton" to="." method="_on_clear_search_button_pressed"]
-[connection signal="show_array_mesh" from="SplitContainer/ModelInfoView" to="." method="_on_model_info_view_show_array_mesh"]
+[connection signal="closing" from="SplitContainer/MarginContainer/LibraryView/MainContainer/View3dModel" to="." method="_on_view_3d_model_closing"]
+[connection signal="show_3d_file" from="SplitContainer/ModelInfoView" to="." method="_on_model_info_view_show_3d_file"]
 [connection signal="dir_selected" from="FolderDialog" to="." method="_on_folder_dialog_dir_selected"]

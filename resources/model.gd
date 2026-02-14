@@ -103,6 +103,11 @@ func _scan_subdirectory(base_path: String, subdir: String):
 	# Directory exists. Scan it.
 	var new_files = Array(dir.get_files())
 	for file in new_files:
+		# This is protection against thingyverse wierdness, where sometimes
+		# there are broken stl files in the images directory.
+		if subdir.split("/")[-1] == "images" && file.ends_with(".stl"):
+			continue
+		
 		files.append("%s/%s" % [subdir, file])
 	
 	# Scan subdirectories

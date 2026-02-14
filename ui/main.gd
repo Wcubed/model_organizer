@@ -168,8 +168,8 @@ func _on_clear_search_button_pressed() -> void:
 	clear_and_select_search()
 
 
-func _on_model_info_view_show_array_mesh(mesh: ArrayMesh, path: String) -> void:
-	view_3d_model.show_mesh(mesh, path)
+func _on_model_info_view_show_3d_file(absolute_path: String) -> void:
+	view_3d_model.show_3d_file(absolute_path)
 
 
 func _on_search_edit_debounce_timeout() -> void:
@@ -183,3 +183,7 @@ func _gui_input(event: InputEvent) -> void:
 	if event.is_action("ui_back"):
 		clear_and_select_search()
 		accept_event()
+
+
+func _on_view_3d_model_closing() -> void:
+	model_info_view.clear_printable_selection()
