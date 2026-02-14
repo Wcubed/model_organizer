@@ -20,6 +20,10 @@ config/icon="res://icon.svg"
 
 Utils="*uid://bi23marhytk6n"
 
+[display]
+
+window/size/mode=2
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/stl-io/plugin.cfg")
