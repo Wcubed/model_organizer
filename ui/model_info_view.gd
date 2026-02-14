@@ -1,6 +1,8 @@
 extends PanelContainer
 
+## User requests that the given 3d file be shown in the main viewer.
 signal show_3d_file(absolute_path: String)
+signal render_icon_for_3d_file(absolute_path: String)
 
 var model: Model = null
 
@@ -28,6 +30,10 @@ func display_model(new_model: Model):
 	
 	for file in model.files:
 		if _is_file_printable(file):
+			# TODO: Check if there is already an icon
+			# Otherwise do the render
+			render_icon_for_3d_file.emit("%s/%s" % [model.directory, file])
+			
 			_add_file_to_printables(file)
 		else:
 			_add_file_to_rest_list(file)

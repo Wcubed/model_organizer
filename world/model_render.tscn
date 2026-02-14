@@ -23,6 +23,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.9683704)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="CameraAnchor" unique_id=1085592398]
 transform = Transform3D(0.81086975, 0.32810092, -0.48460305, -0.4138178, 0.9069816, -0.07835457, 0.4138178, 0.26407275, 0.87121785, -1.9852785, -0.768767, 3.329545)
+light_color = Color(0.91228896, 0.9122889, 0.91228884, 1)
 
 [node name="Model" type="MeshInstance3D" parent="." unique_id=2002218616]
 unique_name_in_owner = true

@@ -7,6 +7,7 @@ extends PanelContainer
 @onready var model_info_view := %ModelInfoView
 @onready var view_3d_model := %View3dModel
 @onready var search_edit_debounce := %SearchEditDebounce
+@onready var background_rendered := %BackgroundRenderer
 
 var model_card_scene := preload("res://ui/model_card.tscn")
 
@@ -190,3 +191,7 @@ func _gui_input(event: InputEvent) -> void:
 
 func _on_view_3d_model_closing() -> void:
 	model_info_view.clear_printable_selection()
+
+
+func _on_model_info_view_render_icon_for_3d_file(absolute_path: String) -> void:
+	background_rendered.add_icon_to_queue(absolute_path)

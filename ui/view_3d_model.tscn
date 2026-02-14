@@ -15,6 +15,9 @@ keycode = 4194305
 [sub_resource type="Shortcut" id="Shortcut_drs6m"]
 events = [SubResource("InputEventKey_eg6m8")]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_drs6m"]
+bg_color = Color(0, 0, 0, 1)
+
 [node name="View3dModel" type="PanelContainer" unique_id=680745111]
 anchors_preset = 15
 anchor_right = 1.0
@@ -54,17 +57,23 @@ tooltip_text = "Close"
 shortcut = SubResource("Shortcut_drs6m")
 text = "X"
 
-[node name="SubViewportContainer" type="SubViewportContainer" parent="VBoxContainer" unique_id=299587002]
+[node name="ViewportBackground" type="PanelContainer" parent="VBoxContainer" unique_id=1418956313]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_drs6m")
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="VBoxContainer/ViewportBackground" unique_id=299587002]
 layout_mode = 2
 size_flags_vertical = 3
 stretch = true
 
-[node name="SubViewport" type="SubViewport" parent="VBoxContainer/SubViewportContainer" unique_id=1823375539]
+[node name="SubViewport" type="SubViewport" parent="VBoxContainer/ViewportBackground/SubViewportContainer" unique_id=1823375539]
+transparent_bg = true
 handle_input_locally = false
 size = Vector2i(1152, 605)
 render_target_update_mode = 4
 
-[node name="ModelRender" parent="VBoxContainer/SubViewportContainer/SubViewport" unique_id=310926734 instance=ExtResource("3_eg6m8")]
+[node name="ModelRender" parent="VBoxContainer/ViewportBackground/SubViewportContainer/SubViewport" unique_id=310926734 instance=ExtResource("3_eg6m8")]
 unique_name_in_owner = true
 
 [connection signal="pressed" from="VBoxContainer/PanelContainer/Toolbar/OpenExternalButton" to="." method="_on_open_external_button_pressed"]

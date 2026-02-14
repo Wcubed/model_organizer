@@ -5,8 +5,15 @@ extends Resource
 
 @export var directory: String
 @export var name: String
-## Relative path of all files found in the directory.
+## Relative path of all model files found in the directory.
+@export var model_files: Array[String]
+## Relative path of all non-model files found in the directory.
+## Excludes images that have the same file name as a 3d model,
+## Those are in `rendered_files`
 @export var files: Array[String]
+## When an image has the same directory/name as a renderable file, it is
+## put in this list.
+@export var rendered_files: Array[String]
 ## Relative path to the cover image.
 @export var cover_image_path: String = ""
 ## Cover image, if available
@@ -22,6 +29,7 @@ func _init(p_directory = ""):
 ## Call this once after creating the resource.
 func scan_directory():
 	files = []
+	rendered_files = []
 	cover_image_path = ""
 	cover_image = null
 	
