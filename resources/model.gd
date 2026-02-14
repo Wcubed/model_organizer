@@ -75,7 +75,7 @@ func _load_cover_image() -> int:
 		return FAILED
 	
 	var absolute_image_path := "%s/%s" % [directory, cover_image_path]
-	var cached_cover_path = "%s/%s.png" % [Utils.cover_image_cache_dir, Utils.hash_string(cover_image_path)]
+	var cached_cover_path = "%s/%s.png" % [Utils.cover_image_cache_dir, Utils.hash_string(absolute_image_path)]
 	
 	# First try to load the cached image.
 	var image = Image.new()
