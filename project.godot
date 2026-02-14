@@ -16,6 +16,10 @@ config/features=PackedStringArray("4.6", "Mobile")
 run/low_processor_mode=true
 config/icon="res://icon.svg"
 
+[autoload]
+
+Utils="*uid://bi23marhytk6n"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/stl-io/plugin.cfg")

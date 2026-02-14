@@ -74,24 +74,26 @@ func _load_cover_image() -> int:
 	if cover_image_path.is_empty():
 		return FAILED
 	
+	var absolute_image_path := "%s/%s" % [directory, cover_image_path]
+	var cached_cover_path = "%s/%s.png" % [Utils.cover_image_cache_dir, Utils.hash_string(cover_image_path)]
+	
+	# First try to load the cached image.
 	var image = Image.new()
-	var err := image.load("%s/%s" % [directory, cover_image_path])
+	var err := image.load(cached_cover_path)
 	
 	if err == OK:
-		# Scale the image to fit to the expected size
-		var container_size = 300.0
-		var new_height = container_size
-		var new_width = container_size
-		if image.get_height() > image.get_width():
-			var new_scale = container_size / image.get_height() as float
-			new_width = image.get_width() * new_scale
-		else:
-			var new_scale = container_size / image.get_width() as float
-			new_height = image.get_height() * new_scale
-		
-		image.resize(new_width, new_height, Image.INTERPOLATE_BILINEAR)
-		
+		# Cached image loaded
 		cover_image = ImageTexture.create_from_image(image)
+	else:
+		# No cached image, load the original.
+		err = image.load(absolute_image_path)
+	
+		if err == OK:
+			Utils.fit_image_proportional(image)
+			
+			# Cache the smaller version of the cover image.
+			image.save_png(cached_cover_path)
+			cover_image = ImageTexture.create_from_image(image)
 	
 	return err
 

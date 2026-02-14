@@ -21,6 +21,9 @@ var models: Array[Model] = []
 var searched_models: Array[Model] = []
 
 func _ready() -> void:
+	# Make sure that the cache dir is created.
+	DirAccess.make_dir_recursive_absolute(Utils.cover_image_cache_dir)
+	
 	load_settings()
 	scan_library()
 
