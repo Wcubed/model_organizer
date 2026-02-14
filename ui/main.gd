@@ -168,7 +168,7 @@ func _on_search_edit_text_submitted(_new_text: String) -> void:
 
 
 func _on_clear_search_button_pressed() -> void:
-	view_3d_model.hide_mesh()
+	view_3d_model.hide_3d_file()
 	clear_and_select_search()
 
 
@@ -180,7 +180,7 @@ func _on_search_edit_debounce_timeout() -> void:
 	run_search_and_display()
 
 func _on_search_edit_focus_entered() -> void:
-	view_3d_model.hide()
+	view_3d_model.hide_3d_file()
 
 
 func _gui_input(event: InputEvent) -> void:

@@ -6,9 +6,6 @@ signal render_icon_for_3d_file(absolute_path: String)
 
 var model: Model = null
 
-## These extensions can be put on the 3d printer. Others can't.
-var printable_file_extensions := [".stl", ".3mf"]
-
 @onready var printables_list := %PrintablesList
 @onready var rest_list := %RestList
 @onready var printable_entry_scene := preload("res://ui/printable_entry_line.tscn")
@@ -28,15 +25,14 @@ func display_model(new_model: Model):
 		rest_list.remove_child(child)
 		child.queue_free()
 	
-	for file in model.files:
-		if _is_file_printable(file):
-			# TODO: Check if there is already an icon
-			# Otherwise do the render
-			render_icon_for_3d_file.emit("%s/%s" % [model.directory, file])
-			
-			_add_file_to_printables(file)
-		else:
-			_add_file_to_rest_list(file)
+	for file in model.printable_files:
+		# TODO: Check if there is already an icon
+		# Otherwise do the render
+		render_icon_for_3d_file.emit("%s/%s" % [model.directory, file])
+		
+		_add_file_to_printables(file)
+	for file in model.misc_files:
+		_add_file_to_rest_list(file)
 
 func clear_printable_selection():
 	for child in printables_list.get_children():
@@ -53,13 +49,6 @@ func _add_file_to_rest_list(file: String):
 	var label := Label.new()
 	label.text = file.trim_prefix("/")
 	rest_list.add_child(label)
-
-func _is_file_printable(file: String) -> bool:
-	for extension in printable_file_extensions:
-		if file.to_lower().ends_with(extension):
-			return true
-	
-	return false
 
 func _on_printable_clicked(absolute_file: String, control: Control):
 	clear_printable_selection()

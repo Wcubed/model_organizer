@@ -28,3 +28,8 @@ func hash_string(string: String) -> String:
 	ctx.start(HashingContext.HASH_MD5)
 	ctx.update(string.to_multibyte_char_buffer())
 	return ctx.finish().hex_encode()
+
+
+func strip_extension(path: String) -> String:
+	var extension_location := path.rfind(".")
+	return path.substr(0, extension_location)

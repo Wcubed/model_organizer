@@ -20,8 +20,7 @@ func _process(_delta: float) -> void:
 		var rendered_texture: ViewportTexture = viewport.get_texture()
 		var image := rendered_texture.get_image()
 		
-		var extension_location := viewport_rendered_once.rfind(".")
-		var image_path := viewport_rendered_once.substr(0, extension_location) + ".png"
+		var image_path := Utils.strip_extension(viewport_rendered_once) + ".png"
 		
 		image.save_png(image_path)
 		

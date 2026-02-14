@@ -5,21 +5,25 @@ extends Resource
 
 @export var directory: String
 @export var name: String
-## Relative path of all model files found in the directory.
-@export var model_files: Array[String]
+
+## Relative path of all printable files found in the directory.
+@export var printable_files: Array[String]
 ## Relative path of all non-model files found in the directory.
 ## Excludes images that have the same file name as a 3d model,
 ## Those are in `rendered_files`
-@export var files: Array[String]
+@export var misc_files: Array[String]
 ## When an image has the same directory/name as a renderable file, it is
 ## put in this list.
 @export var rendered_files: Array[String]
+
 ## Relative path to the cover image.
 @export var cover_image_path: String = ""
 ## Cover image, if available
 @export var cover_image: ImageTexture = null
 
 var supported_image_extensions := [".jpg", ".jpeg", ".png", ".webp"]
+## These extensions can be put on the 3d printer. Others can't.
+var printable_file_extensions := [".stl", ".3mf"]
 
 func _init(p_directory = ""):
 	directory = p_directory
@@ -28,7 +32,8 @@ func _init(p_directory = ""):
 ## Scans the model directory for relevant info.
 ## Call this once after creating the resource.
 func scan_directory():
-	files = []
+	printable_files = []
+	misc_files = []
 	rendered_files = []
 	cover_image_path = ""
 	cover_image = null
@@ -51,13 +56,13 @@ func matches_search(search_text: String) -> bool:
 	# All items are in the model, this model matches.
 	return true
 
-## Returns true if the model contains this text somewhere.
+## Returns true if the model contains this text somewhere in the printables.
 ## Item should be lowercase.
 func _contains_text_item(item: String) -> bool:
 	if name.to_lower().contains(item) || directory.to_lower().contains(item):
 		return true
 	
-	for file in files:
+	for file in printable_files:
 		if file.to_lower().contains(item):
 			return true
 	
@@ -65,7 +70,7 @@ func _contains_text_item(item: String) -> bool:
 
 func _find_and_load_cover_image():
 	# See if we can find a cover image.
-	for file in files:
+	for file in misc_files:
 		for extension in supported_image_extensions:
 			if file.ends_with(extension):
 				cover_image_path = file
@@ -112,16 +117,49 @@ func _scan_subdirectory(base_path: String, subdir: String):
 	
 	# Directory exists. Scan it.
 	var new_files = Array(dir.get_files())
-	for file in new_files:
+	while !new_files.is_empty():
+		var next_file: String = new_files.pop_front()
+		
 		# This is protection against thingyverse wierdness, where sometimes
 		# there are broken stl files in the images directory.
-		if subdir.split("/")[-1] == "images" && file.ends_with(".stl"):
+		if subdir.split("/")[-1] == "images" && next_file.ends_with(".stl"):
+			# Do nothing
 			continue
 		
-		files.append("%s/%s" % [subdir, file])
+		var file_path := "%s/%s" % [subdir, next_file]
+		
+		if _is_file_printable(file_path):
+			printable_files.append(file_path)
+			
+			# Check if there is a png with the same name.
+			var rendered_png_file := Utils.strip_extension(next_file) + ".png"
+			var position := new_files.find(rendered_png_file)
+			
+			var relative_path := "%s/%s" % [subdir, rendered_png_file]
+			if position != -1:
+				# There _is_ a rendered version of this renderable file.
+				rendered_files.append("%s/%s" % relative_path)
+				# That file is now processed, skip it.
+				new_files.remove_at(position)
+			else:
+				# Maybe we have already processed the file?
+				position = misc_files.find(relative_path)
+				if position != -1:
+					misc_files.remove_at(position)
+					rendered_files.append(relative_path)
+		else:
+			misc_files.append(file_path)
 	
 	# Scan subdirectories
 	var subdirs = dir.get_directories()
 	for new_dir in subdirs:
 		var new_subdir = "%s/%s" % [subdir, new_dir]
 		_scan_subdirectory(base_path, new_subdir)
+
+
+func _is_file_printable(file: String) -> bool:
+	for extension in printable_file_extensions:
+		if file.to_lower().ends_with(extension):
+			return true
+	
+	return false
