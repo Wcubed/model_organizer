@@ -10,6 +10,7 @@ func _ready() -> void:
 		return
 	
 	%Name.text = model.name
+	%Name.tooltip_text = model.name
 	
 	if model.cover_image != null:
 		%CoverImage.icon = model.cover_image

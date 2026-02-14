@@ -1,15 +1,9 @@
 [gd_scene format=3 uid="uid://bewt4od0yhro6"]
 
+[ext_resource type="StyleBox" uid="uid://bbvua5inwcru1" path="res://ui/assets/card_panel.tres" id="1_ik174"]
 [ext_resource type="Script" uid="uid://c18vqwdcnwhw1" path="res://ui/model_card.gd" id="1_v1j2q"]
 [ext_resource type="Texture2D" uid="uid://krwk3db78ldi" path="res://ui/assets/Folder.svg" id="2_1133u"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1133u"]
-bg_color = Color(0.16078432, 0.16078432, 0.16078432, 1)
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ik174"]
-bg_color = Color(0, 0, 0, 0.36078432)
+[ext_resource type="StyleBox" uid="uid://4c8pvqsq51ym" path="res://ui/assets/image_background_panel.tres" id="3_233cu"]
 
 [node name="ModelCard" type="PanelContainer" unique_id=1605879074]
 clip_contents = true
@@ -21,7 +15,7 @@ grow_vertical = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 mouse_filter = 1
-theme_override_styles/panel = SubResource("StyleBoxFlat_1133u")
+theme_override_styles/panel = ExtResource("1_ik174")
 script = ExtResource("1_v1j2q")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=268130598]
@@ -35,7 +29,7 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 mouse_filter = 1
-theme_override_styles/panel = SubResource("StyleBoxFlat_ik174")
+theme_override_styles/panel = ExtResource("3_233cu")
 
 [node name="CoverImage" type="Button" parent="VBoxContainer/ImageContainer" unique_id=2130713813]
 unique_name_in_owner = true

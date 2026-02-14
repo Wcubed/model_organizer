@@ -12,6 +12,7 @@ func show_3d_file(absolute_path: String):
 	
 	var result = STLIO.Importer.LoadFromPath(mesh_path)
 	if result is ArrayMesh:
+		print(mesh_path)
 		model_render.show_model(result)
 	else:
 		model_render.remove_model()

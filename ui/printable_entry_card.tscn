@@ -1,0 +1,59 @@
+[gd_scene format=3 uid="uid://b76k56lpsvxnd"]
+
+[ext_resource type="Script" uid="uid://m5b67ko2lnar" path="res://ui/printable_entry_card.gd" id="1_82sg4"]
+[ext_resource type="StyleBox" uid="uid://bbvua5inwcru1" path="res://ui/assets/card_panel.tres" id="1_elwgj"]
+[ext_resource type="Texture2D" uid="uid://krwk3db78ldi" path="res://ui/assets/Folder.svg" id="2_elwgj"]
+[ext_resource type="StyleBox" uid="uid://4c8pvqsq51ym" path="res://ui/assets/image_background_panel.tres" id="3_l1t1k"]
+[ext_resource type="Texture2D" uid="uid://ku8ydk8bce1i" path="res://ui/assets/ExternalLink.svg" id="3_qjna4"]
+
+[node name="PrintableEntryCard" type="PanelContainer" unique_id=1904036443]
+offset_right = 76.0
+offset_bottom = 24.0
+theme_override_styles/panel = ExtResource("1_elwgj")
+script = ExtResource("1_82sg4")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=460597958]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer" unique_id=866800386]
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 2
+theme_override_styles/panel = ExtResource("3_l1t1k")
+
+[node name="RenderedImage" type="Button" parent="VBoxContainer/PanelContainer" unique_id=106863677]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_default_cursor_shape = 2
+flat = true
+icon_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer" unique_id=539067848]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer" unique_id=424234429]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="VBoxContainer/MarginContainer/HBoxContainer" unique_id=1370203804]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
+clip_text = true
+text_overrun_behavior = 1
+
+[node name="Folderbutton" type="Button" parent="VBoxContainer/MarginContainer/HBoxContainer" unique_id=679772482]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+icon = ExtResource("2_elwgj")
+
+[node name="ExternalButton" type="Button" parent="VBoxContainer/MarginContainer/HBoxContainer" unique_id=1467444683]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+icon = ExtResource("3_qjna4")
+
+[connection signal="pressed" from="VBoxContainer/PanelContainer/RenderedImage" to="." method="_on_rendered_image_pressed"]
+[connection signal="pressed" from="VBoxContainer/MarginContainer/HBoxContainer/Folderbutton" to="." method="_on_folderbutton_pressed"]
+[connection signal="pressed" from="VBoxContainer/MarginContainer/HBoxContainer/ExternalButton" to="." method="_on_external_button_pressed"]

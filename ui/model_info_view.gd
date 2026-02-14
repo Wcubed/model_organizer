@@ -8,7 +8,7 @@ var model: Model = null
 
 @onready var printables_list := %PrintablesList
 @onready var rest_list := %RestList
-@onready var printable_entry_scene := preload("res://ui/printable_entry_line.tscn")
+@onready var printable_entry_scene := preload("res://ui/printable_entry_card.tscn")
 
 func display_model(new_model: Model):
 	model = new_model
@@ -26,11 +26,14 @@ func display_model(new_model: Model):
 		child.queue_free()
 	
 	for file in model.printable_files:
-		# TODO: Check if there is already an icon
-		# Otherwise do the render
-		render_icon_for_3d_file.emit("%s/%s" % [model.directory, file])
+		# Is there a pre-rendered image for this one?
+		var rendered_path := Utils.strip_extension(file) + ".png"
+		if !model.rendered_files.find(rendered_path):
+			# No rendered image yet. Queue the render.
+			render_icon_for_3d_file.emit("%s/%s" % [model.directory, file])
+			rendered_path = ""
 		
-		_add_file_to_printables(file)
+		_add_file_to_printables(file, rendered_path)
 	for file in model.misc_files:
 		_add_file_to_rest_list(file)
 
@@ -38,11 +41,12 @@ func clear_printable_selection():
 	for child in printables_list.get_children():
 		child.show_selected(false)
 
-func _add_file_to_printables(file: String):
+## Rendered path may be empty, signyfing that there is no render yet.
+func _add_file_to_printables(file: String, rendered_path: String):
 	var entry := printable_entry_scene.instantiate()
 	printables_list.add_child(entry)
 	
-	entry.display_file("%s/%s" % [model.directory, file])
+	entry.display_file(model.directory, file, rendered_path)
 	entry.preview_printable.connect(_on_printable_clicked)
 
 func _add_file_to_rest_list(file: String):
