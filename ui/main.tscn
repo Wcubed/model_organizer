@@ -141,3 +141,4 @@ unique_name_in_owner = true
 [connection signal="render_icon_for_3d_file" from="SplitContainer/ModelInfoView" to="." method="_on_model_info_view_render_icon_for_3d_file"]
 [connection signal="show_3d_file" from="SplitContainer/ModelInfoView" to="." method="_on_model_info_view_show_3d_file"]
 [connection signal="dir_selected" from="FolderDialog" to="." method="_on_folder_dialog_dir_selected"]
+[connection signal="render_done" from="BackgroundRenderer" to="." method="_on_background_renderer_render_done"]

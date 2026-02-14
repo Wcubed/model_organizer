@@ -2,7 +2,7 @@ extends PanelContainer
 
 ## User requests that the given 3d file be shown in the main viewer.
 signal show_3d_file(absolute_path: String)
-signal render_icon_for_3d_file(absolute_path: String)
+signal render_icon_for_3d_file(absolute_path: String, model: Model)
 
 var model: Model = null
 
@@ -30,7 +30,7 @@ func display_model(new_model: Model):
 		var rendered_path := Utils.strip_extension(file) + ".png"
 		if model.rendered_files.find(rendered_path) == -1:
 			# No rendered image yet. Queue the render.
-			render_icon_for_3d_file.emit("%s/%s" % [model.directory, file])
+			render_icon_for_3d_file.emit("%s/%s" % [model.directory, file], model)
 			rendered_path = ""
 		
 		_add_file_to_printables(file, rendered_path)
@@ -40,6 +40,17 @@ func display_model(new_model: Model):
 func clear_printable_selection():
 	for child in printables_list.get_children():
 		child.show_selected(false)
+
+
+## An image has been rendered in the background, check if one needs to be updated.
+func background_render_done(absolute_image_path: String, texture: ImageTexture):
+	if !absolute_image_path.begins_with(model.directory):
+		# This is not an image that belongs to our model.
+		return
+	
+	for child in printables_list.get_children():
+		child.background_render_done(absolute_image_path, texture)
+	
 
 ## Rendered path may be empty, signyfing that there is no render yet.
 func _add_file_to_printables(file: String, rendered_path: String):

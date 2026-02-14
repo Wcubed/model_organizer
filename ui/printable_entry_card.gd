@@ -32,6 +32,11 @@ func show_selected(selected: bool):
 		name_label.remove_theme_color_override("font_color")
 		name_label.remove_theme_color_override("font_hover_color")
 
+## An image has been rendered in the background, check if we need to update.
+func background_render_done(absolute_image_path: String, texture: ImageTexture):
+	if Utils.strip_extension(file) == Utils.strip_extension(absolute_image_path):
+		# This is our texture.
+		rendered_image.icon = texture
 
 func _on_external_button_pressed() -> void:
 	OS.shell_open(file)
