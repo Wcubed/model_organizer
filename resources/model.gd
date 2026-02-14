@@ -70,7 +70,12 @@ func _contains_text_item(item: String) -> bool:
 
 func _find_and_load_cover_image():
 	# See if we can find a cover image.
-	for file in misc_files:
+	var potential_covers := []
+	potential_covers.append_array(misc_files)
+	# If there is no cover in the standard images, we fall back to rendered ones.
+	potential_covers.append_array(rendered_files)
+	
+	for file in potential_covers:
 		for extension in supported_image_extensions:
 			if file.ends_with(extension):
 				cover_image_path = file
