@@ -26,38 +26,44 @@ layout_mode = 2
 clip_text = true
 text_overrun_behavior = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer" unique_id=37384423]
+[node name="VSplitContainer" type="VSplitContainer" parent="VBoxContainer" unique_id=52574019]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer" unique_id=914835356]
+[node name="PrintablesScrollContainer" type="ScrollContainer" parent="VBoxContainer/VSplitContainer" unique_id=37384423]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/VSplitContainer/PrintablesScrollContainer" unique_id=1674685551]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 0
 
-[node name="ImageContainer" type="PanelContainer" parent="VBoxContainer/ScrollContainer/VBoxContainer" unique_id=2096255779]
-custom_minimum_size = Vector2(0, 300)
+[node name="ImageContainer" type="PanelContainer" parent="VBoxContainer/VSplitContainer/PrintablesScrollContainer/VBoxContainer" unique_id=2096255779]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 mouse_filter = 1
 
-[node name="CoverImage" type="TextureRect" parent="VBoxContainer/ScrollContainer/VBoxContainer/ImageContainer" unique_id=1240338193]
+[node name="CoverImage" type="TextureRect" parent="VBoxContainer/VSplitContainer/PrintablesScrollContainer/VBoxContainer/ImageContainer" unique_id=1240338193]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_default_cursor_shape = 2
 expand_mode = 3
 stretch_mode = 5
 
-[node name="PrintablesList" type="HFlowContainer" parent="VBoxContainer/ScrollContainer/VBoxContainer" unique_id=1355011890]
+[node name="PrintablesList" type="HFlowContainer" parent="VBoxContainer/VSplitContainer/PrintablesScrollContainer/VBoxContainer" unique_id=1355011890]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HSeparator" type="HSeparator" parent="VBoxContainer/ScrollContainer/VBoxContainer" unique_id=49650539]
+[node name="RestScrollContainer" type="ScrollContainer" parent="VBoxContainer/VSplitContainer" unique_id=1742707349]
 layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.1
 
-[node name="RestList" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/VBoxContainer" unique_id=1291393028]
+[node name="RestList" type="VBoxContainer" parent="VBoxContainer/VSplitContainer/RestScrollContainer" unique_id=1291393028]
 unique_name_in_owner = true
 layout_mode = 2

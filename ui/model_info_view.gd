@@ -28,7 +28,7 @@ func display_model(new_model: Model):
 	for file in model.printable_files:
 		# Is there a pre-rendered image for this one?
 		var rendered_path := Utils.strip_extension(file) + ".png"
-		if !model.rendered_files.find(rendered_path):
+		if model.rendered_files.find(rendered_path) == -1:
 			# No rendered image yet. Queue the render.
 			render_icon_for_3d_file.emit("%s/%s" % [model.directory, file])
 			rendered_path = ""
