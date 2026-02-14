@@ -74,4 +74,6 @@ func _start_next_file_load():
 
 
 func add_icon_to_queue(printable_path: String, model: Model):
-	render_queue.append([printable_path, model])
+	var item := [printable_path, model]
+	if render_queue.find(item) == -1:
+		render_queue.append(item)
