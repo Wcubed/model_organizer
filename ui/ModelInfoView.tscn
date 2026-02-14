@@ -2,6 +2,7 @@
 
 [ext_resource type="StyleBox" uid="uid://dsm55rfa1xmm4" path="res://ui/assets/basic_panel.tres" id="1_i757p"]
 [ext_resource type="Script" uid="uid://bqc2u8semv3i6" path="res://ui/model_info_view.gd" id="2_pl1ku"]
+[ext_resource type="Texture2D" uid="uid://cbddlka4k8xs" path="res://ui/assets/Reload.svg" id="3_00am7"]
 
 [node name="ModelInfoView" type="PanelContainer" unique_id=1478585159]
 custom_minimum_size = Vector2(200, 0)
@@ -20,11 +21,22 @@ script = ExtResource("2_pl1ku")
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1644965546]
 layout_mode = 2
 
-[node name="NameLabel" type="Label" parent="VBoxContainer" unique_id=1478592964]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=2011376415]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=1478592964]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 clip_text = true
 text_overrun_behavior = 1
+
+[node name="RerenderButton" type="Button" parent="VBoxContainer/HBoxContainer" unique_id=724126116]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+tooltip_text = "Regenerate rendered previews."
+icon = ExtResource("3_00am7")
+icon_alignment = 1
 
 [node name="VSplitContainer" type="VSplitContainer" parent="VBoxContainer" unique_id=52574019]
 layout_mode = 2
@@ -67,3 +79,5 @@ size_flags_stretch_ratio = 0.1
 [node name="RestList" type="VBoxContainer" parent="VBoxContainer/VSplitContainer/RestScrollContainer" unique_id=1291393028]
 unique_name_in_owner = true
 layout_mode = 2
+
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/RerenderButton" to="." method="_on_rerender_button_pressed"]

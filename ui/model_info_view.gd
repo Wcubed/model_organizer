@@ -29,12 +29,16 @@ func display_model(new_model: Model):
 		var rendered_path := Utils.strip_extension(file) + ".png"
 		if model.rendered_files.find(rendered_path) == -1:
 			# No rendered image yet. Queue the render.
-			render_icon_for_3d_file.emit("%s/%s" % [model.directory, file], model)
+			_queue_render_icon(file)
 			rendered_path = ""
 		
 		_add_file_to_printables(file, rendered_path)
 	for file in model.misc_files:
 		_add_file_to_rest_list(file)
+
+func _queue_render_icon(file: String):
+	render_icon_for_3d_file.emit("%s/%s" % [model.directory, file], model)
+
 
 func clear_printable_selection():
 	for child in printables_list.get_children():
@@ -69,3 +73,8 @@ func _on_printable_clicked(absolute_file: String, control: Control):
 	control.show_selected(true)
 	
 	show_3d_file.emit(absolute_file)
+
+
+func _on_rerender_button_pressed() -> void:
+	for file in model.printable_files:
+		_queue_render_icon(file)
