@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cp6bws4rospck" path="res://world/model_render.gd" id="1_c33fe"]
 [ext_resource type="Environment" uid="uid://bnk7kl00ipr4m" path="res://world/assets/new_environment.tres" id="2_4ydpa"]
-[ext_resource type="Material" uid="uid://j7lwesu0i584" path="res://world/assets/new_standard_material_3d.tres" id="3_nea5t"]
+[ext_resource type="Material" uid="uid://dkd18jtnr7rj3" path="res://world/assets/matcap.material" id="3_c2p1a"]
 [ext_resource type="ArrayMesh" uid="uid://dp0oalvfdmamd" path="res://world/assets/monkey.stl" id="4_c2p1a"]
 
 [node name="ModelRender" type="Node3D" unique_id=310926734]
@@ -20,17 +20,7 @@ rotation_order = 3
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3)
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="CameraAnchor" unique_id=1085592398]
-transform = Transform3D(0.6983029, 0.4013069, -0.5927281, -0.5061491, 0.8623567, -0.012443572, 0.50614905, 0.30869797, 0.8053069, -2.6733868, -0.76876676, 3.3295445)
-light_color = Color(0.07916763, 0.70983905, 0.70532316, 1)
-sky_mode = 1
-
-[node name="DirectionalLight3D2" type="DirectionalLight3D" parent="CameraAnchor" unique_id=1194328909]
-transform = Transform3D(0.2180635, -0.3938236, 0.8929457, 0.60738826, 0.77093315, 0.19168292, -0.7638904, 0.50056547, 0.40731606, 3.7252433, 0.7651552, 4.387458)
-light_color = Color(0.872341, 0.098107584, 0.68673724, 1)
-sky_mode = 1
-
 [node name="Model" type="MeshInstance3D" parent="." unique_id=2002218616]
 unique_name_in_owner = true
-material_override = ExtResource("3_nea5t")
+material_override = ExtResource("3_c2p1a")
 mesh = ExtResource("4_c2p1a")
