@@ -8,11 +8,10 @@ extends PanelContainer
 @onready var view_3d_model := %View3dModel
 @onready var search_edit_debounce := %SearchEditDebounce
 @onready var background_rendered := %BackgroundRenderer
+@onready var library_scanner := %LibraryScanner
 
 var model_card_scene := preload("res://ui/model_card.tscn")
 
-## List of extensions that will be ignored when checking if a folder contains models.
-var ignored_extensions := PackedStringArray([".zip", ".rar", ".orynt3d", ".md", ".txt"])
 var config_file_name := "user://config.cfg"
 var library_dir: String = ""
 
@@ -45,50 +44,18 @@ func load_settings():
 
 
 func scan_library():
-	if library_dir.is_empty():
-		run_search_and_display()
-		return
+	library_scanner.background_scan_library(library_dir)
 	
-	var found_models: Array[Model] = []
-	scan_directory(library_dir, found_models)
-	
-	found_models.sort_custom(_sort_models_by_name)
-	models = found_models
-	
+	for card in model_cards.get_children():
+		model_cards.remove_child(card)
+		card.queue_free()
 	view_3d_model.hide_3d_file()
 	model_info_view.clear_model()
-	run_search_and_display()
 
-func scan_directory(path: String, found_models: Array[Model]):
-	var dir = DirAccess.open(path)
-	if !dir:
-		return
-	
-	# Directory exists. Scan it.
-	var files = Array(dir.get_files())
-	files = files.filter(_filter_ignored_files)
-	
-	if files.size() > 0:
-		# This is a model directory
-		var new_model = Model.new(path)
-		new_model.scan_directory()
-		found_models.append(new_model)
-	else:
-		# Might contain sub directories
-		var subdirs = dir.get_directories()
-		
-		# First check if this is a "thingyverse" folder structure.
-		for subdir in subdirs:
-			if subdir.to_lower() == "files":
-				# Thingyverse.
-				var new_model = Model.new(path)
-				new_model.scan_directory()
-				found_models.append(new_model)
-				return
-		
-		for subdir in subdirs:
-			var new_path = "%s/%s" % [path, subdir]
-			scan_directory(new_path, found_models)
+
+func _on_library_scan_complete(found_models: Array[Model]):
+	models = found_models
+	run_search_and_display()
 
 ## Searches the models.
 ## Clears the model cards and displays the currently found models.
@@ -126,18 +93,6 @@ func clear_and_select_search():
 		run_search_and_display()
 	
 	search_edit.grab_focus()
-
-## Returns true if the file should be included, false otherwise.
-func _filter_ignored_files(file: String) -> bool:
-	for extension in ignored_extensions:
-		if file.to_lower().ends_with(extension):
-			return false
-	
-	return true
-
-
-func _sort_models_by_name(a: Model, b: Model) -> bool:
-	return a.name < b.name
 
 
 func _user_requests_show_model_info(model: Model):

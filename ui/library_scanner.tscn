@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://dpte1nbqy3t7m"]
+
+[ext_resource type="Script" uid="uid://do5630idg5ny2" path="res://ui/library_scanner.gd" id="1_ku3p2"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8kon4"]
+bg_color = Color(0, 0, 0, 0.60784316)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1v6pn"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.078431375, 0.078431375, 0.078431375, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="LibraryScanner" type="PanelContainer" unique_id=1185152023]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_8kon4")
+script = ExtResource("1_ku3p2")
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1670505549]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer" unique_id=1781216869]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1v6pn")
+
+[node name="Label" type="Label" parent="CenterContainer/PanelContainer" unique_id=1988060931]
+layout_mode = 2
+text = "Scanning library..."

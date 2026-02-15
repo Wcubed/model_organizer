@@ -143,7 +143,7 @@ func _scan_subdirectory(base_path: String, subdir: String):
 			var relative_path := "%s/%s" % [subdir, rendered_png_file]
 			if position != -1:
 				# There _is_ a rendered version of this renderable file.
-				rendered_files.append("%s/%s" % relative_path)
+				rendered_files.append(relative_path)
 				# That file is now processed, skip it.
 				new_files.remove_at(position)
 			else:

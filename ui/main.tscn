@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://cmgmvi7dv27ah" path="res://ui/view_3d_model.tscn" id="4_h17sc"]
 [ext_resource type="PackedScene" uid="uid://dnxvxio1xc3kj" path="res://ui/ModelInfoView.tscn" id="4_t6oic"]
 [ext_resource type="PackedScene" uid="uid://buel7pd8k8fac" path="res://ui/BackgroundRenderer.tscn" id="6_fc3ap"]
+[ext_resource type="PackedScene" uid="uid://dpte1nbqy3t7m" path="res://ui/library_scanner.tscn" id="7_06s8x"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8blns"]
 content_margin_left = 5.0
@@ -115,6 +116,11 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 
+[node name="LibraryScanner" parent="." unique_id=994200941 instance=ExtResource("7_06s8x")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
 [node name="FolderDialog" type="FileDialog" parent="." unique_id=1589698455]
 oversampling_override = 1.0
 title = "Open a Directory"
@@ -140,5 +146,6 @@ unique_name_in_owner = true
 [connection signal="closing" from="SplitContainer/MarginContainer/LibraryView/MainContainer/View3dModel" to="." method="_on_view_3d_model_closing"]
 [connection signal="render_icon_for_3d_file" from="SplitContainer/ModelInfoView" to="." method="_on_model_info_view_render_icon_for_3d_file"]
 [connection signal="show_3d_file" from="SplitContainer/ModelInfoView" to="." method="_on_model_info_view_show_3d_file"]
+[connection signal="library_scan_complete" from="LibraryScanner" to="." method="_on_library_scan_complete"]
 [connection signal="dir_selected" from="FolderDialog" to="." method="_on_folder_dialog_dir_selected"]
 [connection signal="render_done" from="BackgroundRenderer" to="." method="_on_background_renderer_render_done"]

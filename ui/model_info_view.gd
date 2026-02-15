@@ -34,6 +34,8 @@ func clear_model():
 	model = null
 	%NameLabel.text = ""
 	%CoverImage.texture = null
+	%PrintablesScrollContainer.scroll_vertical = 0
+	%RestScrollContainer.scroll_vertical = 0
 	
 	for child in printables_list.get_children():
 		printables_list.remove_child(child)
