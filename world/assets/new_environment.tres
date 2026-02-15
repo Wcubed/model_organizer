@@ -10,6 +10,6 @@ background_energy_multiplier = 0.0
 sky = SubResource("Sky_ard8h")
 ambient_light_source = 2
 ambient_light_color = Color(0.5729883, 0.5729883, 0.57298815, 1)
-tonemap_mode = 4
+tonemap_mode = 2
 ssao_enabled = true
 ssao_intensity = 5.0
