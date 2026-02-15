@@ -55,6 +55,8 @@ func scan_library():
 	found_models.sort_custom(_sort_models_by_name)
 	models = found_models
 	
+	view_3d_model.hide_3d_file()
+	model_info_view.clear_model()
 	run_search_and_display()
 
 func scan_directory(path: String, found_models: Array[Model]):

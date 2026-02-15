@@ -11,18 +11,12 @@ var model: Model = null
 @onready var printable_entry_scene := preload("res://ui/printable_entry_card.tscn")
 
 func display_model(new_model: Model):
+	clear_model()
+	
 	model = new_model
 	
 	%NameLabel.text = model.name
 	%CoverImage.texture = model.cover_image
-	
-	for child in printables_list.get_children():
-		printables_list.remove_child(child)
-		child.queue_free()
-	
-	for child in rest_list.get_children():
-		rest_list.remove_child(child)
-		child.queue_free()
 	
 	for file in model.printable_files:
 		# Is there a pre-rendered image for this one?
@@ -35,6 +29,19 @@ func display_model(new_model: Model):
 		_add_file_to_printables(file, rendered_path)
 	for file in model.misc_files:
 		_add_file_to_rest_list(file)
+
+func clear_model():
+	model = null
+	%NameLabel.text = ""
+	%CoverImage.texture = null
+	
+	for child in printables_list.get_children():
+		printables_list.remove_child(child)
+		child.queue_free()
+	
+	for child in rest_list.get_children():
+		rest_list.remove_child(child)
+		child.queue_free()
 
 func _queue_render_icon(file: String):
 	render_icon_for_3d_file.emit("%s/%s" % [model.directory, file], model)
