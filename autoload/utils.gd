@@ -52,7 +52,11 @@ func sort_string_natural_order(a: String, b: String) -> bool:
 
 func select_file_in_file_manager(path: String):
 	if dolphin_is_installed:
-		print(path)
+		# The window by default does not come to the foreground due to focus-stealing prevention.
+		# To fix this, on dolphin:
+		# - go to "more actions -> Configure special window settings..."
+		# - Add "Focus stealing prevention": "Force", "None"
+		# Now dolphin will come to the foreground when activated.
 		OS.create_process("dolphin", ["--select", path])
 	else:
 		OS.shell_show_in_file_manager(path, false)
