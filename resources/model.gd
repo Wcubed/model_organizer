@@ -40,6 +40,10 @@ func scan_directory():
 	
 	_scan_subdirectory(directory, "")
 	
+	printable_files.sort_custom(Utils.sort_string_natural_order)
+	misc_files.sort_custom(Utils.sort_string_natural_order)
+	rendered_files.sort_custom(Utils.sort_string_natural_order)
+	
 	_find_and_load_cover_image()
 
 ## Returns true if the model matches the search parameters.

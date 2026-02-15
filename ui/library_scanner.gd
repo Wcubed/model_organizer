@@ -78,4 +78,4 @@ func _filter_ignored_files(file: String) -> bool:
 
 
 func _sort_models_by_name(a: Model, b: Model) -> bool:
-	return a.name < b.name
+	return Utils.sort_string_natural_order(a.name, b.name)

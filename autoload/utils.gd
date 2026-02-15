@@ -33,3 +33,8 @@ func hash_string(string: String) -> String:
 func strip_extension(path: String) -> String:
 	var extension_location := path.rfind(".")
 	return path.substr(0, extension_location)
+
+
+## Returns true if a < b
+func sort_string_natural_order(a: String, b: String) -> bool:
+	return a.naturalnocasecmp_to(b) == -1
