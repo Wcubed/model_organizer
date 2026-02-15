@@ -17,7 +17,7 @@ func _ready() -> void:
 
 
 func _on_open_button_pressed() -> void:
-	OS.shell_open(model.directory)
+	Utils.open_with_default_program(model.directory)
 
 
 func _on_cover_image_pressed() -> void:

@@ -39,13 +39,11 @@ func background_render_done(absolute_image_path: String, texture: ImageTexture):
 		rendered_image.icon = texture
 
 func _on_external_button_pressed() -> void:
-	OS.shell_open(file)
+	Utils.open_with_default_program(file)
 
 
 func _on_folderbutton_pressed() -> void:
-	var last_slash := file.rfind("/")
-	var folder_path = file.substr(0, last_slash)
-	OS.shell_open(folder_path)
+	Utils.select_file_in_file_manager(file)
 
 func _on_rendered_image_pressed() -> void:
 	preview_printable.emit(file, self)

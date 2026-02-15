@@ -3,8 +3,18 @@ extends Node
 ## Size of cover images when scaled down from the original.
 const ICON_SIZE := 300.0
 
+# If we want to "open folder and select file" on linux, we need to fall back to doing it manually.
+# This is true if dolphin is available on the system.
+var dolphin_is_installed := false
 
 @onready var cover_image_cache_dir := "%s/%s" % [OS.get_user_data_dir(), "cover_images"]
+
+
+func _ready() -> void:
+	if OS.get_name() == "Linux":
+		# See if dolphin is installed.
+		var result = OS.execute("dolphin", ["-v"])
+		dolphin_is_installed = result == 0
 
 
 ## Fits the image into a square of ICON_SIZE.
@@ -38,3 +48,14 @@ func strip_extension(path: String) -> String:
 ## Returns true if a < b
 func sort_string_natural_order(a: String, b: String) -> bool:
 	return a.naturalnocasecmp_to(b) == -1
+
+
+func select_file_in_file_manager(path: String):
+	if dolphin_is_installed:
+		print(path)
+		OS.create_process("dolphin", ["--select", path])
+	else:
+		OS.shell_show_in_file_manager(path, false)
+
+func open_with_default_program(path: String):
+	OS.shell_open(path)
