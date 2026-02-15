@@ -11,6 +11,9 @@ var model: Model = null
 @onready var rendering_status_label := %RenderingStatusLabel
 @onready var printable_entry_scene := preload("res://ui/printable_entry_card.tscn")
 
+func _ready() -> void:
+	rendering_status_label.text = ""
+
 func display_model(new_model: Model):
 	clear_model()
 	
@@ -37,7 +40,6 @@ func clear_model():
 	%CoverImage.texture = null
 	%PrintablesScrollContainer.scroll_vertical = 0
 	%RestScrollContainer.scroll_vertical = 0
-	rendering_status_label.text = ""
 	
 	for child in printables_list.get_children():
 		printables_list.remove_child(child)

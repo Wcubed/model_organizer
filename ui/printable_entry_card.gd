@@ -11,9 +11,10 @@ var file: String = ""
 ## The `maybe_rendered_path` may be empty, which means there is no render yet.
 func display_file(model_base_dir: String, new_file: String, maybe_rendered_path: String):
 	file = "%s/%s" % [model_base_dir, new_file]
-	# Show only the filename, with the full path in the tooltip.
-	name_label.text = file.split("/")[-1]
-	name_label.tooltip_text = file.trim_prefix("/")
+	# Show only the filename
+	var filename := file.split("/")[-1]
+	name_label.text = filename
+	name_label.tooltip_text = filename
 	
 	# Attempt to load the rendered image.
 	if !maybe_rendered_path.is_empty():

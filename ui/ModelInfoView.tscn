@@ -64,7 +64,6 @@ mouse_filter = 1
 [node name="CoverImage" type="TextureRect" parent="VBoxContainer/VSplitContainer/PrintablesScrollContainer/VBoxContainer/ImageContainer" unique_id=1240338193]
 unique_name_in_owner = true
 layout_mode = 2
-mouse_default_cursor_shape = 2
 expand_mode = 3
 stretch_mode = 5
 

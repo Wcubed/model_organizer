@@ -9,6 +9,7 @@
 [node name="PrintableEntryCard" type="PanelContainer" unique_id=1904036443]
 offset_right = 76.0
 offset_bottom = 24.0
+mouse_filter = 1
 theme_override_styles/panel = ExtResource("1_elwgj")
 script = ExtResource("1_82sg4")
 
@@ -18,11 +19,13 @@ layout_mode = 2
 [node name="PanelContainer" type="PanelContainer" parent="VBoxContainer" unique_id=866800386]
 custom_minimum_size = Vector2(200, 200)
 layout_mode = 2
+mouse_filter = 1
 theme_override_styles/panel = ExtResource("3_l1t1k")
 
 [node name="RenderedImage" type="Button" parent="VBoxContainer/PanelContainer" unique_id=106863677]
 unique_name_in_owner = true
 layout_mode = 2
+mouse_filter = 1
 mouse_default_cursor_shape = 2
 flat = true
 icon_alignment = 1
@@ -41,7 +44,7 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-mouse_default_cursor_shape = 2
+mouse_filter = 1
 clip_text = true
 text_overrun_behavior = 1
 
