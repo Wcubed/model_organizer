@@ -1,6 +1,7 @@
 extends Node
 
 signal render_done(absolute_image_path: String, texture: ImageTexture)
+signal queue_length_changed(length: int)
 
 ## Queue of files to render.
 ## Contains [printable_path, model it belongs to]
@@ -26,7 +27,9 @@ func _process(_delta: float) -> void:
 		
 		var image_path := Utils.strip_extension(viewport_rendered_once[0]) + ".png"
 		render_done.emit(image_path, image_texture)
+		queue_length_changed.emit(render_queue.size())
 		
+		# Save the newly generated image.
 		var model: Model = viewport_rendered_once[1]
 		var relative_image_path = image_path.trim_prefix(model.directory + "/")
 		model.rendered_files.append(relative_image_path)
@@ -77,3 +80,4 @@ func add_icon_to_queue(printable_path: String, model: Model):
 	var item := [printable_path, model]
 	if render_queue.find(item) == -1:
 		render_queue.append(item)
+		queue_length_changed.emit(render_queue.size())

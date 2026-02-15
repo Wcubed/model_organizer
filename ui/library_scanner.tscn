@@ -32,6 +32,14 @@ layout_mode = 2
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_1v6pn")
 
-[node name="Label" type="Label" parent="CenterContainer/PanelContainer" unique_id=1988060931]
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer" unique_id=524912869]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer/PanelContainer/VBoxContainer" unique_id=1988060931]
 layout_mode = 2
 text = "Scanning library..."
+
+[node name="AmountLabel" type="Label" parent="CenterContainer/PanelContainer/VBoxContainer" unique_id=118005498]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1

@@ -3,6 +3,7 @@
 [ext_resource type="StyleBox" uid="uid://dsm55rfa1xmm4" path="res://ui/assets/basic_panel.tres" id="1_i757p"]
 [ext_resource type="Script" uid="uid://bqc2u8semv3i6" path="res://ui/model_info_view.gd" id="2_pl1ku"]
 [ext_resource type="Texture2D" uid="uid://cbddlka4k8xs" path="res://ui/assets/Reload.svg" id="3_00am7"]
+[ext_resource type="PackedScene" uid="uid://b76k56lpsvxnd" path="res://ui/printable_entry_card.tscn" id="4_1ngue"]
 
 [node name="ModelInfoView" type="PanelContainer" unique_id=1478585159]
 custom_minimum_size = Vector2(200, 0)
@@ -28,6 +29,7 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+text = "Name"
 clip_text = true
 text_overrun_behavior = 1
 
@@ -72,6 +74,12 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
+[node name="PrintableEntryCard" parent="VBoxContainer/VSplitContainer/PrintablesScrollContainer/VBoxContainer/PrintablesList" unique_id=1904036443 instance=ExtResource("4_1ngue")]
+layout_mode = 2
+
+[node name="PrintableEntryCard2" parent="VBoxContainer/VSplitContainer/PrintablesScrollContainer/VBoxContainer/PrintablesList" unique_id=1641753820 instance=ExtResource("4_1ngue")]
+layout_mode = 2
+
 [node name="RestScrollContainer" type="ScrollContainer" parent="VBoxContainer/VSplitContainer" unique_id=1742707349]
 unique_name_in_owner = true
 layout_mode = 2
@@ -81,5 +89,25 @@ size_flags_stretch_ratio = 0.1
 [node name="RestList" type="VBoxContainer" parent="VBoxContainer/VSplitContainer/RestScrollContainer" unique_id=1291393028]
 unique_name_in_owner = true
 layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/VSplitContainer/RestScrollContainer/RestList" unique_id=1800121227]
+layout_mode = 2
+text = "Entry"
+
+[node name="Label2" type="Label" parent="VBoxContainer/VSplitContainer/RestScrollContainer/RestList" unique_id=1036776502]
+layout_mode = 2
+text = "Entry2"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer" unique_id=70669308]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer" unique_id=1837006801]
+layout_mode = 2
+
+[node name="RenderingStatusLabel" type="Label" parent="VBoxContainer/HBoxContainer2" unique_id=1650181316]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5529556, 0.55295557, 0.55295557, 1)
+text = "Rendering...."
 
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/RerenderButton" to="." method="_on_rerender_button_pressed"]

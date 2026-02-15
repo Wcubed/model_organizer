@@ -156,3 +156,7 @@ func _on_model_info_view_render_icon_for_3d_file(absolute_path: String, model: M
 
 func _on_background_renderer_render_done(absolute_image_path: String, texture: ImageTexture) -> void:
 	model_info_view.background_render_done(absolute_image_path, texture)
+
+
+func _on_background_renderer_queue_length_changed(length: int) -> void:
+	model_info_view.render_queue_length_changed(length)

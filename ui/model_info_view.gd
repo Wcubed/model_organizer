@@ -8,6 +8,7 @@ var model: Model = null
 
 @onready var printables_list := %PrintablesList
 @onready var rest_list := %RestList
+@onready var rendering_status_label := %RenderingStatusLabel
 @onready var printable_entry_scene := preload("res://ui/printable_entry_card.tscn")
 
 func display_model(new_model: Model):
@@ -36,6 +37,7 @@ func clear_model():
 	%CoverImage.texture = null
 	%PrintablesScrollContainer.scroll_vertical = 0
 	%RestScrollContainer.scroll_vertical = 0
+	rendering_status_label.text = ""
 	
 	for child in printables_list.get_children():
 		printables_list.remove_child(child)
@@ -62,7 +64,12 @@ func background_render_done(absolute_image_path: String, texture: ImageTexture):
 	
 	for child in printables_list.get_children():
 		child.background_render_done(absolute_image_path, texture)
-	
+
+func render_queue_length_changed(new_length: int):
+	if new_length == 0:
+		rendering_status_label.text = ""
+	else:
+		rendering_status_label.text = "Rendering %d models..." % new_length
 
 ## Rendered path may be empty, signyfing that there is no render yet.
 func _add_file_to_printables(file: String, rendered_path: String):

@@ -4,7 +4,8 @@ extends PanelContainer
 signal library_scan_complete(found_models: Array[Model])
 
 var scan_thread: Thread = null
-
+## Updated by the background thread, read by the main thread.
+var amount_found := 0
 
 ## List of extensions that will be ignored when checking if a folder contains models.
 var ignored_extensions := PackedStringArray([".zip", ".rar", ".orynt3d", ".md", ".txt"])
@@ -13,6 +14,8 @@ func _process(_delta: float) -> void:
 	if scan_thread == null:
 		# Nothing to do here.
 		return
+	
+	%AmountLabel.text = "%d" % amount_found
 	
 	if !scan_thread.is_alive():
 		var found_models = scan_thread.wait_to_finish()
@@ -24,6 +27,8 @@ func _process(_delta: float) -> void:
 ## Starts the library scan in the background.
 func background_scan_library(library_dir: String):
 	show()
+	amount_found = 0
+	%AmountLabel.text = ""
 	
 	scan_thread = Thread.new()
 	scan_thread.start(_thread_scan_library.bind(library_dir))
@@ -50,6 +55,7 @@ func _scan_directory(path: String, found_models: Array[Model]):
 		var new_model = Model.new(path)
 		new_model.scan_directory()
 		found_models.append(new_model)
+		amount_found = found_models.size()
 	else:
 		# Might contain sub directories
 		var subdirs = dir.get_directories()
@@ -61,6 +67,7 @@ func _scan_directory(path: String, found_models: Array[Model]):
 				var new_model = Model.new(path)
 				new_model.scan_directory()
 				found_models.append(new_model)
+				amount_found = found_models.size()
 				return
 		
 		for subdir in subdirs:
