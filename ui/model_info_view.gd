@@ -14,7 +14,9 @@ var model: Model = null
 func _ready() -> void:
 	rendering_status_label.text = ""
 
-func display_model(new_model: Model):
+## Display the given model. The search string is used to display which
+## printables match that search.
+func display_model(new_model: Model, search_string: String):
 	clear_model()
 	
 	model = new_model
@@ -30,7 +32,7 @@ func display_model(new_model: Model):
 			_queue_render_icon(file)
 			rendered_path = ""
 		
-		_add_file_to_printables(file, rendered_path)
+		_add_file_to_printables(file, rendered_path, search_string)
 	for file in model.misc_files:
 		_add_file_to_rest_list(file)
 
@@ -74,11 +76,13 @@ func render_queue_length_changed(new_length: int):
 		rendering_status_label.text = "Rendering %d models..." % new_length
 
 ## Rendered path may be empty, signyfing that there is no render yet.
-func _add_file_to_printables(file: String, rendered_path: String):
+func _add_file_to_printables(file: String, rendered_path: String, search_string: String):
 	var entry := printable_entry_scene.instantiate()
 	printables_list.add_child(entry)
 	
-	entry.display_file(model.directory, file, rendered_path)
+	var is_search_result := Utils.string_matches_search_pattern(file, search_string)
+	
+	entry.display_file(model.directory, file, rendered_path, is_search_result)
 	entry.preview_printable.connect(_on_printable_clicked)
 
 func _add_file_to_rest_list(file: String):

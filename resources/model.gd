@@ -48,26 +48,11 @@ func scan_directory():
 
 ## Returns true if the model matches the search parameters.
 func matches_search(search_text: String) -> bool:
-	var text_items = search_text.to_lower().split(" ")
-	
-	for item in text_items:
-		if item.is_empty():
-			continue
-		
-		if !_contains_text_item(item):
-			# Item is not in the model.
-			return false
-	# All items are in the model, this model matches.
-	return true
-
-## Returns true if the model contains this text somewhere in the printables.
-## Item should be lowercase.
-func _contains_text_item(item: String) -> bool:
-	if name.to_lower().contains(item) || directory.to_lower().contains(item):
+	if Utils.string_matches_search_pattern(name, search_text) || Utils.string_matches_search_pattern(directory, search_text):
 		return true
 	
 	for file in printable_files:
-		if file.to_lower().contains(item):
+		if Utils.string_matches_search_pattern(file, search_text):
 			return true
 	
 	return false

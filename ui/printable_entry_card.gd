@@ -6,15 +6,21 @@ var file: String = ""
 
 @onready var name_label := %NameLabel
 @onready var rendered_image := %RenderedImage
+@onready var normal_panel := preload("res://ui/assets/card_panel.tres")
+@onready var highlight_panel := preload("res://ui/assets/card_panel_highlight.tres")
 
 ## Call this after adding the entry to the scene tree.
 ## The `maybe_rendered_path` may be empty, which means there is no render yet.
-func display_file(model_base_dir: String, new_file: String, maybe_rendered_path: String):
+func display_file(model_base_dir: String, new_file: String, maybe_rendered_path: String, is_search_result: bool):
 	file = "%s/%s" % [model_base_dir, new_file]
 	# Show only the filename
 	var filename := file.split("/")[-1]
 	name_label.text = filename
 	name_label.tooltip_text = filename
+	
+	if is_search_result:
+		name_label.add_theme_color_override("font_color", Color.GREEN)
+		name_label.add_theme_color_override("font_hover_color", Color.LIGHT_GREEN)
 	
 	# Attempt to load the rendered image.
 	if !maybe_rendered_path.is_empty():
@@ -27,11 +33,9 @@ func display_file(model_base_dir: String, new_file: String, maybe_rendered_path:
 
 func show_selected(selected: bool):
 	if selected:
-		name_label.add_theme_color_override("font_color", Color.GREEN)
-		name_label.add_theme_color_override("font_hover_color", Color.LIGHT_GREEN)
+		add_theme_stylebox_override("panel", highlight_panel)
 	else:
-		name_label.remove_theme_color_override("font_color")
-		name_label.remove_theme_color_override("font_hover_color")
+		add_theme_stylebox_override("panel", normal_panel)
 
 ## An image has been rendered in the background, check if we need to update.
 func background_render_done(absolute_image_path: String, texture: ImageTexture):

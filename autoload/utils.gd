@@ -63,3 +63,16 @@ func select_file_in_file_manager(path: String):
 
 func open_with_default_program(path: String):
 	OS.shell_open(path)
+
+
+## Returns true if the given string matches the given search pattern.
+func string_matches_search_pattern(string: String, pattern: String) -> bool:
+	var items := pattern.to_lower().split(" ")
+	var lower_string = string.to_lower()
+	
+	for item in items:
+		if !lower_string.contains(item):
+			# The string needs to contain all the items to match.
+			return false
+	return true
+	

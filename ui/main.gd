@@ -96,7 +96,7 @@ func clear_and_select_search():
 
 
 func _user_requests_show_model_info(model: Model):
-	model_info_view.display_model(model)
+	model_info_view.display_model(model, search_edit.text)
 
 
 func _on_path_button_pressed() -> void:
