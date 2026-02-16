@@ -84,9 +84,15 @@ func _load_cover_image() -> int:
 	var absolute_image_path := "%s/%s" % [directory, cover_image_path]
 	var cached_cover_path = "%s/%s.png" % [Utils.cover_image_cache_dir, Utils.hash_string(absolute_image_path)]
 	
-	# First try to load the cached image.
+	# The modified time will be "0" if the image does not exist, so it works even if the cache does not exist.
+	var image_is_newer_than_cache := FileAccess.get_modified_time(absolute_image_path) > FileAccess.get_modified_time(cached_cover_path)
+	
 	var image = Image.new()
-	var err := image.load(cached_cover_path)
+	
+	var err := ERR_QUERY_FAILED
+	if !image_is_newer_than_cache:
+		# If the cache is up-to-date, try to load it.
+		err = image.load(cached_cover_path)
 	
 	if err == OK:
 		# Cached image loaded
