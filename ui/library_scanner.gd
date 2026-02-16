@@ -8,7 +8,7 @@ var scan_thread: Thread = null
 var amount_found := 0
 
 ## List of extensions that will be ignored when checking if a folder contains models.
-var ignored_extensions := PackedStringArray([".zip", ".rar", ".orynt3d", ".md", ".txt"])
+var ignored_extensions := PackedStringArray([".zip", ".rar", ".orynt3d", ".md", ".txt", ".moa"])
 
 func _process(_delta: float) -> void:
 	if scan_thread == null:
