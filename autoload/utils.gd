@@ -3,6 +3,10 @@ extends Node
 ## Size of cover images when scaled down from the original.
 const ICON_SIZE := 300.0
 
+## Which axis is "up" for a model.
+## Z is most common, with Y second common.
+enum ModelOrientation {Z_UP = 0, Y_UP = 1}
+
 # If we want to "open folder and select file" on linux, we need to fall back to doing it manually.
 # This is true if dolphin is available on the system.
 var dolphin_is_installed := false

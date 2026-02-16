@@ -1,5 +1,7 @@
 extends PanelContainer
 
+const CONFIG_FILE_NAME := "user://config.cfg"
+
 @onready var amount_label := %AmountLabel
 @onready var search_edit := %SearchEdit
 @onready var folder_dialog := $FolderDialog
@@ -12,7 +14,6 @@ extends PanelContainer
 
 var model_card_scene := preload("res://ui/model_card.tscn")
 
-var config_file_name := "user://config.cfg"
 var library_dir: String = ""
 
 ## All the models found in the library.
@@ -31,12 +32,12 @@ func save_settings():
 	var config = ConfigFile.new()
 	config.set_value("main", "library_dir", library_dir)
 	
-	config.save(config_file_name)
+	config.save(CONFIG_FILE_NAME)
 
 
 func load_settings():
 	var config = ConfigFile.new()
-	var err = config.load(config_file_name)
+	var err = config.load(CONFIG_FILE_NAME)
 	if err != OK:
 		return
 	
@@ -132,8 +133,8 @@ func _on_clear_search_button_pressed() -> void:
 	clear_and_select_search()
 
 
-func _on_model_info_view_show_3d_file(absolute_path: String) -> void:
-	view_3d_model.show_3d_file(absolute_path)
+func _on_model_info_view_show_3d_file(absolute_path: String, default_orientation: Utils.ModelOrientation) -> void:
+	view_3d_model.show_3d_file(absolute_path, default_orientation)
 
 
 func _on_search_edit_debounce_timeout() -> void:

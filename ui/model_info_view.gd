@@ -1,7 +1,7 @@
 extends PanelContainer
 
 ## User requests that the given 3d file be shown in the main viewer.
-signal show_3d_file(absolute_path: String)
+signal show_3d_file(absolute_path: String, default_orientation: Utils.ModelOrientation)
 signal render_icon_for_3d_file(absolute_path: String, model: Model)
 
 var model: Model = null
@@ -9,6 +9,7 @@ var model: Model = null
 @onready var printables_list := %PrintablesList
 @onready var rest_list := %RestList
 @onready var rendering_status_label := %RenderingStatusLabel
+@onready var model_orientation_options := %ModelOrientationOptions
 @onready var printable_entry_scene := preload("res://ui/printable_entry_card.tscn")
 
 func _ready() -> void:
@@ -22,6 +23,7 @@ func display_model(new_model: Model, search_string: String):
 	model = new_model
 	
 	%NameLabel.text = model.name
+	%ModelOrientationOptions.select(model.default_orientation)
 	%CoverImage.texture = model.cover_image
 	
 	for file in model.printable_files:
@@ -75,6 +77,12 @@ func render_queue_length_changed(new_length: int):
 	else:
 		rendering_status_label.text = "Rendering %d models..." % new_length
 
+
+func render_all_model_previews():
+	for file in model.printable_files:
+		_queue_render_icon(file)
+
+
 ## Rendered path may be empty, signyfing that there is no render yet.
 func _add_file_to_printables(file: String, rendered_path: String, search_string: String):
 	var entry := printable_entry_scene.instantiate()
@@ -94,9 +102,14 @@ func _on_printable_clicked(absolute_file: String, control: Control):
 	clear_printable_selection()
 	control.show_selected(true)
 	
-	show_3d_file.emit(absolute_file)
+	show_3d_file.emit(absolute_file, model.default_orientation)
 
 
 func _on_rerender_button_pressed() -> void:
-	for file in model.printable_files:
-		_queue_render_icon(file)
+	render_all_model_previews()
+
+
+func _on_model_orientation_options_item_selected(index: int) -> void:
+	# User changed the prefered orientation of the model.
+	model.default_orientation = index as Utils.ModelOrientation
+	render_all_model_previews()

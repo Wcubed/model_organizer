@@ -13,14 +13,16 @@ environment = ExtResource("2_4ydpa")
 
 [node name="CameraAnchor" type="Node3D" parent="." unique_id=402891599]
 unique_name_in_owner = true
-transform = Transform3D(0.9999996, 0, 0, 0, 0.7071065, 0.70710653, 0, -0.7071065, 0.70710653, 0, 0, 0)
-rotation_order = 3
+transform = Transform3D(0.7071065, -0.3535532, 0.61237216, 0, 0.866025, 0.49999982, -0.7071065, -0.3535532, 0.61237216, 0, 0, 0)
 
 [node name="Camera3D" type="Camera3D" parent="CameraAnchor" unique_id=1472047281]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3)
 
-[node name="Model" type="MeshInstance3D" parent="." unique_id=2002218616]
+[node name="ModelAnchor" type="Node3D" parent="." unique_id=614833153]
+unique_name_in_owner = true
+
+[node name="Model" type="MeshInstance3D" parent="ModelAnchor" unique_id=2002218616]
 unique_name_in_owner = true
 material_override = ExtResource("3_c2p1a")
 mesh = ExtResource("4_c2p1a")

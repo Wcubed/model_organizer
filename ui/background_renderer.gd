@@ -59,7 +59,7 @@ func _process(_delta: float) -> void:
 		
 		var mesh: ArrayMesh = ResourceLoader.load_threaded_get(next_item[0])
 		
-		model_renderer.show_model(mesh)
+		model_renderer.show_model(mesh, next_item[1].default_orientation)
 		viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 		viewport_rendered_once = next_item
 	else:

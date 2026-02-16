@@ -3,6 +3,8 @@ extends Resource
 
 ## A single model can contain multiple stl files.
 
+const CONFIG_FILE_NAME := "config.moa"
+
 @export var directory: String
 @export var name: String
 
@@ -21,6 +23,14 @@ extends Resource
 ## Cover image, if available
 @export var cover_image: ImageTexture = null
 
+## --- User config that is saved in the directory on-change ---
+
+## Which way "up" the model should be displayed by default.
+var default_orientation: Utils.ModelOrientation = Utils.ModelOrientation.Z_UP:
+	set(new_value):
+		default_orientation = new_value
+		_save_config()
+
 var supported_image_extensions := [".jpg", ".jpeg", ".png", ".webp"]
 ## These extensions can be put on the 3d printer. Others can't.
 var printable_file_extensions := [".stl", ".3mf"]
@@ -38,6 +48,8 @@ func scan_directory():
 	cover_image_path = ""
 	cover_image = null
 	
+	_load_config_or_default()
+	
 	_scan_subdirectory(directory, "")
 	
 	printable_files.sort_custom(Utils.sort_string_natural_order)
@@ -45,6 +57,22 @@ func scan_directory():
 	rendered_files.sort_custom(Utils.sort_string_natural_order)
 	
 	_find_and_load_cover_image()
+
+func _load_config_or_default():
+	var config = ConfigFile.new()
+	# We do not care if the config loads correctly or not.
+	# Because if there is no config, we want to fall back to defaults anyway.
+	config.load("%s/%s" % [directory, CONFIG_FILE_NAME])
+	
+	default_orientation = config.get_value("main", "default_orientation", Utils.ModelOrientation.Z_UP)
+
+## Call this only when the config is changed.
+func _save_config():
+	var config = ConfigFile.new()
+	
+	config.set_value("main", "default_orientation", default_orientation)
+	
+	config.save("%s/%s" % [directory, CONFIG_FILE_NAME])
 
 ## Returns true if the model matches the search parameters.
 func matches_search(search_text: String) -> bool:
@@ -124,6 +152,10 @@ func _scan_subdirectory(base_path: String, subdir: String):
 		# there are broken stl files in the images directory.
 		if subdir.split("/")[-1] == "images" && next_file.ends_with(".stl"):
 			# Do nothing
+			continue
+		
+		if next_file == CONFIG_FILE_NAME:
+			# Do not list the config in the list of files.
 			continue
 		
 		var file_path := "%s/%s" % [subdir, next_file]
