@@ -44,6 +44,9 @@ func load_settings():
 
 
 func scan_library():
+	# First clear any models that are still being rendered.
+	background_rendered.stop_and_clear_queue()
+	
 	library_scanner.background_scan_library(library_dir)
 	
 	for card in model_cards.get_children():

@@ -36,6 +36,7 @@ func _process(_delta: float) -> void:
 		image.save_png(image_path)
 		
 		viewport_rendered_once = []
+		model_renderer.remove_model()
 	
 	if render_queue.is_empty():
 		return
@@ -81,3 +82,11 @@ func add_icon_to_queue(printable_path: String, model: Model):
 	var item := [printable_path, model]
 	if render_queue.find(item) == -1:
 		render_queue.append(item)
+
+
+## Clears the rendering process. Use this when reloading the library to prevent broken references.
+func stop_and_clear_queue():
+	render_queue.clear()
+	viewport_rendered_once = []
+	model_renderer.remove_model()
+	queue_length_changed.emit(render_queue.size())
