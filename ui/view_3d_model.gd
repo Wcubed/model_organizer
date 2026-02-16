@@ -28,7 +28,7 @@ func _on_close_button_pressed() -> void:
 
 
 func _on_open_external_button_pressed() -> void:
-	Utils.select_file_in_file_manager(mesh_path)
+	Utils.open_with_default_program(mesh_path)
 
 
 func _gui_input(event: InputEvent) -> void:
