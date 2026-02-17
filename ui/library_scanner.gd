@@ -36,12 +36,12 @@ func background_scan_library(library_dir: String):
 
 func _thread_scan_library(library_dir: String) -> Array[Model]:
 	var found_models: Array[Model] = []
-	_scan_directory(library_dir, found_models)
+	_scan_directory(library_dir, library_dir, found_models)
 	found_models.sort_custom(_sort_models_by_name)
 	return found_models
 
 
-func _scan_directory(path: String, found_models: Array[Model]):
+func _scan_directory(path: String, library_dir: String, found_models: Array[Model]):
 	var dir = DirAccess.open(path)
 	if !dir:
 		return
@@ -52,7 +52,7 @@ func _scan_directory(path: String, found_models: Array[Model]):
 	
 	if files.size() > 0:
 		# This is a model directory
-		var new_model = Model.new(path)
+		var new_model = Model.new(path, library_dir)
 		new_model.scan_directory()
 		found_models.append(new_model)
 		amount_found = found_models.size()
@@ -64,7 +64,7 @@ func _scan_directory(path: String, found_models: Array[Model]):
 		for subdir in subdirs:
 			if subdir.to_lower() == "files":
 				# Thingyverse.
-				var new_model = Model.new(path)
+				var new_model = Model.new(path, library_dir)
 				new_model.scan_directory()
 				found_models.append(new_model)
 				amount_found = found_models.size()
@@ -72,7 +72,7 @@ func _scan_directory(path: String, found_models: Array[Model]):
 		
 		for subdir in subdirs:
 			var new_path = "%s/%s" % [path, subdir]
-			_scan_directory(new_path, found_models)
+			_scan_directory(new_path, library_dir, found_models)
 
 
 ## Returns true if the file should be included, false otherwise.

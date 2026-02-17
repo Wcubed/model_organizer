@@ -88,7 +88,7 @@ func _add_file_to_printables(file: String, rendered_path: String, search_string:
 	var entry := printable_entry_scene.instantiate()
 	printables_list.add_child(entry)
 	
-	var is_search_result := Utils.string_matches_search_pattern(file, search_string)
+	var is_search_result := Utils.string_matches_search_pattern(file, search_string) == Utils.StringMatchResult.SUCCESS
 	
 	entry.display_file(model.directory, file, rendered_path, is_search_result)
 	entry.preview_printable.connect(_on_printable_clicked)

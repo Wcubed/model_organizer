@@ -64,6 +64,14 @@ unique_name_in_owner = true
 wait_time = 0.3
 one_shot = true
 
+[node name="Label" type="Label" parent="SplitContainer/MarginContainer/LibraryView/PanelContainer/Toolbar" unique_id=1694354389]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+tooltip_text = "Prefix words with '!' to exclude matching directories."
+mouse_filter = 1
+text = "?"
+horizontal_alignment = 1
+
 [node name="ClearSearchButton" type="Button" parent="SplitContainer/MarginContainer/LibraryView/PanelContainer/Toolbar" unique_id=1014391993]
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2

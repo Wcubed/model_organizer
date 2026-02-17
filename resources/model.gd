@@ -6,6 +6,8 @@ extends Resource
 const CONFIG_FILE_NAME := "config.moa"
 
 @export var directory: String
+## The directory relative to the library root
+@export var relative_directory: String
 @export var name: String
 
 ## Relative path of all printable files found in the directory.
@@ -35,8 +37,10 @@ var supported_image_extensions := [".jpg", ".jpeg", ".png", ".webp"]
 ## These extensions can be put on the 3d printer. Others can't.
 var printable_file_extensions := [".stl", ".3mf"]
 
-func _init(p_directory = ""):
+## The p_directory and library directory should be absolute paths.
+func _init(p_directory = "", library_directory = ""):
 	directory = p_directory
+	relative_directory = p_directory.trim_prefix(library_directory)
 	name = directory.split("/")[-1].split(".")[0]
 
 ## Scans the model directory for relevant info.
@@ -76,11 +80,18 @@ func _save_config():
 
 ## Returns true if the model matches the search parameters.
 func matches_search(search_text: String) -> bool:
-	if Utils.string_matches_search_pattern(name, search_text) || Utils.string_matches_search_pattern(directory, search_text):
+	var dir_result := Utils.string_matches_search_pattern(relative_directory, search_text)
+	if dir_result == Utils.StringMatchResult.SUCCESS:
 		return true
+	elif dir_result == Utils.StringMatchResult.FAIL_CONTAINS_NEGATIVE:
+		# If the directory contains a negative, we don't need to look at the
+		# individiual files. 
+		return false
+	
+	# Directory did not match, look at the files instead.
 	
 	for file in printable_files:
-		if Utils.string_matches_search_pattern(file, search_text):
+		if Utils.string_matches_search_pattern(file, search_text) == Utils.StringMatchResult.SUCCESS:
 			return true
 	
 	return false

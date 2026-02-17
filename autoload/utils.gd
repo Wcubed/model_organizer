@@ -7,6 +7,8 @@ const ICON_SIZE := 300.0
 ## Z is most common, with Y second common.
 enum ModelOrientation {Z_UP = 0, Y_UP = 1}
 
+enum StringMatchResult {SUCCESS, FAIL_MISSING_POSITIVE, FAIL_CONTAINS_NEGATIVE}
+
 # If we want to "open folder and select file" on linux, we need to fall back to doing it manually.
 # This is true if dolphin is available on the system.
 var dolphin_is_installed := false
@@ -70,13 +72,25 @@ func open_with_default_program(path: String):
 
 
 ## Returns true if the given string matches the given search pattern.
-func string_matches_search_pattern(string: String, pattern: String) -> bool:
+func string_matches_search_pattern(string: String, pattern: String) -> StringMatchResult:
 	var items := pattern.to_lower().split(" ")
 	var lower_string = string.to_lower()
 	
-	for item in items:
-		if !lower_string.contains(item):
-			# The string needs to contain all the items to match.
-			return false
-	return true
+	var result := StringMatchResult.SUCCESS
 	
+	for item in items:
+		# An item prefixed with "!" is a negative search term.
+		if item.begins_with("!"):
+			item = item.trim_prefix("!")
+			if lower_string.contains(item):
+				# Not allowed to contain this item.
+				result = StringMatchResult.FAIL_CONTAINS_NEGATIVE
+				# A negative fail has priority over other fails.
+				break
+		else:
+			if !lower_string.contains(item):
+				# The string needs to contain all the items to match.
+				if result != StringMatchResult.FAIL_CONTAINS_NEGATIVE:
+					result = StringMatchResult.FAIL_MISSING_POSITIVE
+	
+	return result
