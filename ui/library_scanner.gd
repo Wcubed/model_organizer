@@ -4,8 +4,16 @@ extends PanelContainer
 signal library_scan_complete(found_models: Array[Model])
 
 var scan_thread: Thread = null
+## After being detected, the models are scanned in another thread.
+var model_scan_thread: Thread = null
+var model_scan_queue: Array[Model] = []
+var run_model_scan_thread := false
+
 ## Updated by the background thread, read by the main thread.
 var amount_found := 0
+## Updated by the background thread, read by the main thread.
+var amount_processed := 0
+var time_scan_started := 0.0
 
 ## List of extensions that will be ignored when checking if a folder contains models.
 var ignored_extensions := PackedStringArray([".zip", ".rar", ".orynt3d", ".md", ".txt", ".moa"])
@@ -15,11 +23,19 @@ func _process(_delta: float) -> void:
 		# Nothing to do here.
 		return
 	
-	%AmountLabel.text = "%d" % amount_found
+	var time_taken := Time.get_unix_time_from_system() - time_scan_started
 	
-	if !scan_thread.is_alive():
+	%AmountLabel.text = "%d/%d" % [amount_processed, amount_found]
+	%ProgressBar.value = amount_processed as float / amount_found as float
+	
+	if !scan_thread.is_alive() && model_scan_queue.is_empty():
+		run_model_scan_thread = false
 		var found_models = scan_thread.wait_to_finish()
+		model_scan_thread.wait_to_finish()
+		
 		library_scan_complete.emit(found_models)
+		print("Scan took %.1fs" % time_taken)
+		
 		# Get out of the users way.
 		hide()
 		scan_thread = null
@@ -28,10 +44,18 @@ func _process(_delta: float) -> void:
 func background_scan_library(library_dir: String):
 	show()
 	amount_found = 0
+	amount_processed = 0
 	%AmountLabel.text = ""
+	%ProgressBar.value = 0
+	
+	time_scan_started = Time.get_unix_time_from_system()
 	
 	scan_thread = Thread.new()
 	scan_thread.start(_thread_scan_library.bind(library_dir))
+	
+	run_model_scan_thread = true
+	model_scan_thread = Thread.new()
+	model_scan_thread.start(_thread_scan_queued_models)
 
 
 func _thread_scan_library(library_dir: String) -> Array[Model]:
@@ -39,6 +63,17 @@ func _thread_scan_library(library_dir: String) -> Array[Model]:
 	_scan_directory(library_dir, library_dir, found_models)
 	found_models.sort_custom(_sort_models_by_name)
 	return found_models
+
+
+func _thread_scan_queued_models():
+	while run_model_scan_thread:
+		var next_model: Model = model_scan_queue.pop_front()
+		if next_model == null:
+			# Wait for a model to be available
+			OS.delay_msec(1)
+		else:
+			next_model.scan_directory()
+			amount_processed += 1
 
 
 func _scan_directory(path: String, library_dir: String, found_models: Array[Model]):
@@ -53,9 +88,9 @@ func _scan_directory(path: String, library_dir: String, found_models: Array[Mode
 	if files.size() > 0:
 		# This is a model directory
 		var new_model = Model.new(path, library_dir)
-		new_model.scan_directory()
+		model_scan_queue.append(new_model)
 		found_models.append(new_model)
-		amount_found = found_models.size()
+		amount_found += 1
 	else:
 		# Might contain sub directories
 		var subdirs = dir.get_directories()
@@ -65,9 +100,9 @@ func _scan_directory(path: String, library_dir: String, found_models: Array[Mode
 			if subdir.to_lower() == "files":
 				# Thingyverse.
 				var new_model = Model.new(path, library_dir)
-				new_model.scan_directory()
+				model_scan_queue.append(new_model)
 				found_models.append(new_model)
-				amount_found = found_models.size()
+				amount_found += 1
 				return
 		
 		for subdir in subdirs:
