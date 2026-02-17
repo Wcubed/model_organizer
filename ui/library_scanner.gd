@@ -65,7 +65,7 @@ func background_scan_library(library_dir: String):
 	run_model_scan_thread = true
 	
 	# Arbitrary number of threads.
-	for i in 5:
+	for i in 1:
 		var new_thread := Thread.new()
 		new_thread.start(_thread_scan_queued_models)
 		model_scan_threads.append(new_thread)
