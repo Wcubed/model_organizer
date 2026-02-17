@@ -7,12 +7,14 @@ var scan_thread: Thread = null
 
 ## After being detected, the models are scanned in multiple threads.
 var model_scan_threads: Array[Thread] = []
+var scan_queue_mutex := Mutex.new()
 var model_scan_queue: Array[Model] = []
 ## After being processed, the models are appended to the found models array.
 ## We cannot create and delete references to the Model in multiple threads
 ## at the same time, because RefCounted _isnt_ atomic!
 ## So we make the model scan thread responsible for handling the references.
 var found_models: Array[Model] = []
+var found_models_mutex := Mutex.new()
 var run_model_scan_thread := false
 
 ## Updated by the background thread, read by the main thread.
@@ -65,7 +67,7 @@ func background_scan_library(library_dir: String):
 	run_model_scan_thread = true
 	
 	# Arbitrary number of threads.
-	for i in 1:
+	for i in 5:
 		var new_thread := Thread.new()
 		new_thread.start(_thread_scan_queued_models)
 		model_scan_threads.append(new_thread)
@@ -78,13 +80,18 @@ func _thread_scan_library(library_dir: String):
 
 func _thread_scan_queued_models():
 	while run_model_scan_thread:
+		scan_queue_mutex.lock()
 		var next_model: Model = model_scan_queue.pop_front()
+		scan_queue_mutex.unlock()
+		
 		if next_model == null:
 			# Wait for a model to be available
 			OS.delay_msec(1)
 		else:
 			next_model.scan_directory()
+			found_models_mutex.lock()
 			found_models.append(next_model)
+			found_models_mutex.unlock()
 			amount_processed += 1
 
 
@@ -100,7 +107,9 @@ func _scan_directory(path: String, library_dir: String):
 	if files.size() > 0:
 		# This is a model directory
 		var new_model = Model.new(path, library_dir)
+		scan_queue_mutex.lock()
 		model_scan_queue.append(new_model)
+		scan_queue_mutex.unlock()
 		amount_found += 1
 	else:
 		# Might contain sub directories
@@ -111,7 +120,9 @@ func _scan_directory(path: String, library_dir: String):
 			if subdir.to_lower() == "files":
 				# Thingyverse.
 				var new_model = Model.new(path, library_dir)
+				scan_queue_mutex.lock()
 				model_scan_queue.append(new_model)
+				scan_queue_mutex.unlock()
 				amount_found += 1
 				return
 		
