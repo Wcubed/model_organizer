@@ -121,8 +121,14 @@ layout_mode = 2
 [node name="RenderingStatusLabel" type="Label" parent="VBoxContainer/HBoxContainer2" unique_id=1650181316]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.5529556, 0.55295557, 0.55295557, 1)
 text = "Rendering...."
+
+[node name="VersionLabel" type="Label" parent="VBoxContainer/HBoxContainer2" unique_id=596979077]
+unique_name_in_owner = true
+layout_mode = 2
+text = "vx.x.x"
 
 [connection signal="item_selected" from="VBoxContainer/HBoxContainer/ModelOrientationOptions" to="." method="_on_model_orientation_options_item_selected"]
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/RerenderButton" to="." method="_on_rerender_button_pressed"]

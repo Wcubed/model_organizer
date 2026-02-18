@@ -14,6 +14,7 @@ var model: Model = null
 
 func _ready() -> void:
 	rendering_status_label.text = ""
+	%VersionLabel.text = "v%s" % ProjectSettings.get_setting("application/config/version")
 
 ## Display the given model. The search string is used to display which
 ## printables match that search.
