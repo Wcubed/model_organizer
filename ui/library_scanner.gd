@@ -43,6 +43,8 @@ func _process(_delta: float) -> void:
 		for thread in model_scan_threads:
 			thread.wait_to_finish()
 		
+		found_models.sort_custom(_sort_models_by_name)
+		
 		library_scan_complete.emit(found_models)
 		print("Scan took %.1fs" % time_taken)
 		
@@ -75,7 +77,6 @@ func background_scan_library(library_dir: String):
 
 func _thread_scan_library(library_dir: String):
 	_scan_directory(library_dir, library_dir)
-	found_models.sort_custom(_sort_models_by_name)
 
 
 func _thread_scan_queued_models():
