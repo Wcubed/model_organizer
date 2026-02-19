@@ -1,6 +1,9 @@
 class_name Model
 extends Resource
 
+## Emitted when the cover image changes.
+signal cover_image_changed()
+
 ## A single model can contain multiple stl files.
 
 const CONFIG_FILE_NAME := "config.moa"
@@ -28,16 +31,10 @@ const CONFIG_FILE_NAME := "config.moa"
 ## --- User config that is saved in the directory on-change ---
 
 ## Which way "up" the model should be displayed by default.
-var default_orientation: Utils.ModelOrientation = Utils.ModelOrientation.Z_UP:
-	set(new_value):
-		default_orientation = new_value
-		_save_config()
+var default_orientation: Utils.ModelOrientation = Utils.ModelOrientation.Z_UP
 
 ## If this is empty, or the file cannot be loaded, the cover image is autodetected.
-var cover_image_override: String = "":
-	set(new_value):
-		cover_image_override = new_value
-		_save_config()
+var cover_image_override: String = ""
 
 ## --- /User config ---
 
@@ -68,7 +65,7 @@ func scan_directory():
 	misc_files.sort_custom(Utils.sort_string_natural_order)
 	rendered_files.sort_custom(Utils.sort_string_natural_order)
 	
-	_find_and_load_cover_image()
+	find_and_load_cover_image()
 
 func _load_config_or_default():
 	var config = ConfigFile.new()
@@ -80,7 +77,7 @@ func _load_config_or_default():
 	cover_image_override = config.get_value("main", "cover_image_override", "")
 
 ## Call this only when the config is changed.
-func _save_config():
+func save_config():
 	var config = ConfigFile.new()
 	
 	config.set_value("main", "default_orientation", default_orientation)
@@ -106,13 +103,18 @@ func matches_search(search_text: String) -> bool:
 	
 	return false
 
-func _find_and_load_cover_image():
+
+func find_and_load_cover_image():
 	# See if we can find a cover image.
 	var potential_covers := []
 	
 	if !cover_image_override.is_empty():
-		# The user has selected a cover, use that as first option.
-		potential_covers.append(cover_image_override)
+		# The user has selected a cover and it exists, use that as first option.
+		if FileAccess.file_exists("%s/%s" % [directory, cover_image_override]):
+			potential_covers.append(cover_image_override)
+		else:
+			# Selected cover no longer exists.
+			cover_image_override = ""
 	
 	potential_covers.append_array(misc_files)
 	# If there is no cover in the standard images, we fall back to rendered ones.
@@ -121,31 +123,37 @@ func _find_and_load_cover_image():
 	for file in potential_covers:
 		for extension in supported_image_extensions:
 			if file.ends_with(extension):
-				cover_image_path = file
-				
-				if _load_cover_image() == OK:
+				if _load_cover_image(file) == OK:
 					# Cover image loaded ok. Else we try the next one.
+					cover_image_path = file
+					cover_image_changed.emit()
 					return
 	
 	# No cover image.
 	cover_image_path = ""
+	cover_image = null
+	cover_image_changed.emit()
 
 ## Returns OK if the load was successful.
-func _load_cover_image() -> int:
-	if cover_image_path.is_empty():
+func _load_cover_image(relative_path: String) -> int:
+	if relative_path.is_empty():
 		return FAILED
 	
-	var absolute_image_path := "%s/%s" % [directory, cover_image_path]
+	var absolute_image_path := "%s/%s" % [directory, relative_path]
 	var cached_cover_path = "%s/%s.png" % [Utils.cover_image_cache_dir, Utils.hash_string(absolute_image_path)]
 	
 	# The modified time will be "0" if the image does not exist, so it works even if the cache does not exist.
 	var image_is_newer_than_cache := FileAccess.get_modified_time(absolute_image_path) > FileAccess.get_modified_time(cached_cover_path)
 	
+	if !image_is_newer_than_cache && cover_image != null && cover_image_path == relative_path:
+		# This cover image is already loaded and up to date.
+		return OK
+	
 	var image = Image.new()
 	
 	var err := ERR_QUERY_FAILED
 	if !image_is_newer_than_cache:
-		# If the cache is up-to-date, try to load it.
+		# If the cache is up-to-date, try to load from cache.
 		err = image.load(cached_cover_path)
 	
 	if err == OK:
@@ -221,3 +229,19 @@ func _is_file_printable(file: String) -> bool:
 			return true
 	
 	return false
+
+
+## Call this if a new rendered file has been created in the model directory.
+func new_rendered_file(relative_path: String):
+	if rendered_files.find(relative_path) != -1:
+		# Already have this.
+		# But it might still be changed (for example due to orientation)
+		# So recheck the cover image.
+		find_and_load_cover_image()
+		return
+	
+	rendered_files.append(relative_path)
+	rendered_files.sort_custom(Utils.sort_string_natural_order)
+	
+	# The new file might be a cover image.
+	find_and_load_cover_image()

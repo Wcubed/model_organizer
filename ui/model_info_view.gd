@@ -25,8 +25,10 @@ func display_model(new_model: Model, search_string: String):
 	
 	%NameLabel.text = model.name
 	%ModelOrientationOptions.select(model.default_orientation)
-	%CoverImage.texture = model.cover_image
 	%SelectCoverImageButton.show()
+	
+	model.cover_image_changed.connect(_update_cover_image)
+	_update_cover_image()
 	
 	for file in model.printable_files:
 		# Is there a pre-rendered image for this one?
@@ -40,7 +42,15 @@ func display_model(new_model: Model, search_string: String):
 	for file in model.misc_files:
 		_add_file_to_rest_list(file)
 
+
+func _update_cover_image():
+	%CoverImage.texture = model.cover_image
+
+
 func clear_model():
+	if model != null:
+		model.cover_image_changed.disconnect(_update_cover_image)
+	
 	model = null
 	%NameLabel.text = ""
 	%CoverImage.texture = null
@@ -115,6 +125,7 @@ func _on_rerender_button_pressed() -> void:
 func _on_model_orientation_options_item_selected(index: int) -> void:
 	# User changed the prefered orientation of the model.
 	model.default_orientation = index as Utils.ModelOrientation
+	model.save_config()
 	render_all_model_previews()
 
 
@@ -131,3 +142,5 @@ func _on_select_custom_cover_image_dialog_file_selected(path: String) -> void:
 	
 	var relative_path := path.trim_prefix(model.directory)
 	model.cover_image_override = relative_path
+	model.find_and_load_cover_image()
+	model.save_config()

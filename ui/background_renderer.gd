@@ -31,9 +31,12 @@ func _process(_delta: float) -> void:
 		# Save the newly generated image.
 		var model: Model = viewport_rendered_once[1]
 		var relative_image_path = image_path.trim_prefix(model.directory + "/")
-		model.rendered_files.append(relative_image_path)
-		
 		image.save_png(image_path)
+		
+		# We notify the model _after_ we have saved the image,
+		# because the model might want to switch its preview because of
+		# this change.
+		model.new_rendered_file(relative_image_path)
 		
 		viewport_rendered_once = []
 		model_renderer.remove_model()

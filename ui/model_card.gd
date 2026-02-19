@@ -12,9 +12,14 @@ func _ready() -> void:
 	%Name.text = model.name
 	%Name.tooltip_text = model.name
 	
-	if model.cover_image != null:
-		%CoverImage.icon = model.cover_image
+	model.cover_image_changed.connect(_update_cover_image)
+	
+	_update_cover_image()
 
+
+func _update_cover_image():
+	# Cover image can be null, but that simply means "no cover image"
+	%CoverImage.icon = model.cover_image
 
 func _on_open_button_pressed() -> void:
 	Utils.open_with_default_program(model.directory)
