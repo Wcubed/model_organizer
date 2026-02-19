@@ -33,6 +33,14 @@ var default_orientation: Utils.ModelOrientation = Utils.ModelOrientation.Z_UP:
 		default_orientation = new_value
 		_save_config()
 
+## If this is empty, or the file cannot be loaded, the cover image is autodetected.
+var cover_image_override: String = "":
+	set(new_value):
+		cover_image_override = new_value
+		_save_config()
+
+## --- /User config ---
+
 var supported_image_extensions := [".jpg", ".jpeg", ".png", ".webp"]
 ## These extensions can be put on the 3d printer. Others can't.
 var printable_file_extensions := [".stl", ".3mf"]
@@ -69,12 +77,14 @@ func _load_config_or_default():
 	config.load("%s/%s" % [directory, CONFIG_FILE_NAME])
 	
 	default_orientation = config.get_value("main", "default_orientation", Utils.ModelOrientation.Z_UP)
+	cover_image_override = config.get_value("main", "cover_image_override", "")
 
 ## Call this only when the config is changed.
 func _save_config():
 	var config = ConfigFile.new()
 	
 	config.set_value("main", "default_orientation", default_orientation)
+	config.set_value("main", "cover_image_override", cover_image_override)
 	
 	config.save("%s/%s" % [directory, CONFIG_FILE_NAME])
 
@@ -99,6 +109,11 @@ func matches_search(search_text: String) -> bool:
 func _find_and_load_cover_image():
 	# See if we can find a cover image.
 	var potential_covers := []
+	
+	if !cover_image_override.is_empty():
+		# The user has selected a cover, use that as first option.
+		potential_covers.append(cover_image_override)
+	
 	potential_covers.append_array(misc_files)
 	# If there is no cover in the standard images, we fall back to rendered ones.
 	potential_covers.append_array(rendered_files)

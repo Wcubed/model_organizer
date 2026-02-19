@@ -26,6 +26,7 @@ func display_model(new_model: Model, search_string: String):
 	%NameLabel.text = model.name
 	%ModelOrientationOptions.select(model.default_orientation)
 	%CoverImage.texture = model.cover_image
+	%SelectCoverImageButton.show()
 	
 	for file in model.printable_files:
 		# Is there a pre-rendered image for this one?
@@ -45,6 +46,7 @@ func clear_model():
 	%CoverImage.texture = null
 	%PrintablesScrollContainer.scroll_vertical = 0
 	%RestScrollContainer.scroll_vertical = 0
+	%SelectCoverImageButton.hide()
 	
 	for child in printables_list.get_children():
 		printables_list.remove_child(child)
@@ -114,3 +116,18 @@ func _on_model_orientation_options_item_selected(index: int) -> void:
 	# User changed the prefered orientation of the model.
 	model.default_orientation = index as Utils.ModelOrientation
 	render_all_model_previews()
+
+
+func _on_select_cover_image_button_pressed() -> void:
+	%SelectCustomCoverImageDialog.root_subfolder = model.directory
+	%SelectCustomCoverImageDialog.show()
+
+
+func _on_select_custom_cover_image_dialog_file_selected(path: String) -> void:
+	if !path.begins_with(model.directory):
+		# Not a file inside the model directory.
+		# TODO (2026-02-19): Notify the user?
+		return
+	
+	var relative_path := path.trim_prefix(model.directory)
+	model.cover_image_override = relative_path

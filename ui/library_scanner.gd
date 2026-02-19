@@ -42,6 +42,7 @@ func _process(_delta: float) -> void:
 
 		for thread in model_scan_threads:
 			thread.wait_to_finish()
+		model_scan_threads.clear()
 		
 		found_models.sort_custom(_sort_models_by_name)
 		
@@ -66,13 +67,13 @@ func background_scan_library(library_dir: String):
 	scan_thread = Thread.new()
 	scan_thread.start(_thread_scan_library.bind(library_dir))
 	
-	run_model_scan_thread = true
-	
 	# Arbitrary number of threads.
 	for i in 5:
 		var new_thread := Thread.new()
 		new_thread.start(_thread_scan_queued_models)
 		model_scan_threads.append(new_thread)
+	
+	run_model_scan_thread = true
 
 
 func _thread_scan_library(library_dir: String):

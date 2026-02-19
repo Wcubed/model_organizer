@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://c0w6dh1h7d3p3" path="res://ui/assets/ArrowUp.svg" id="3_mq1jg"]
 [ext_resource type="PackedScene" uid="uid://b76k56lpsvxnd" path="res://ui/printable_entry_card.tscn" id="4_1ngue"]
 [ext_resource type="Texture2D" uid="uid://cul1td83oxesx" path="res://ui/assets/ArrowRight.svg" id="4_7ifpr"]
+[ext_resource type="Texture2D" uid="uid://dhuqjqiiko4wh" path="res://ui/assets/Image.svg" id="6_7ifpr"]
 
 [node name="ModelInfoView" type="PanelContainer" unique_id=1478585159]
 custom_minimum_size = Vector2(200, 0)
@@ -69,18 +70,31 @@ horizontal_scroll_mode = 0
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ImageContainer" type="PanelContainer" parent="VBoxContainer/VSplitContainer/PrintablesScrollContainer/VBoxContainer" unique_id=2096255779]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/VSplitContainer/PrintablesScrollContainer/VBoxContainer" unique_id=539955476]
+layout_mode = 2
+
+[node name="ImageContainer" type="PanelContainer" parent="VBoxContainer/VSplitContainer/PrintablesScrollContainer/VBoxContainer/HBoxContainer" unique_id=2096255779]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 mouse_filter = 1
 
-[node name="CoverImage" type="TextureRect" parent="VBoxContainer/VSplitContainer/PrintablesScrollContainer/VBoxContainer/ImageContainer" unique_id=1240338193]
+[node name="CoverImage" type="TextureRect" parent="VBoxContainer/VSplitContainer/PrintablesScrollContainer/VBoxContainer/HBoxContainer/ImageContainer" unique_id=1240338193]
 unique_name_in_owner = true
 layout_mode = 2
 expand_mode = 3
 stretch_mode = 5
+
+[node name="SelectCoverImageButton" type="Button" parent="VBoxContainer/VSplitContainer/PrintablesScrollContainer/VBoxContainer/HBoxContainer" unique_id=398356832]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+size_flags_vertical = 0
+tooltip_text = "Select custom cover image."
+mouse_filter = 1
+icon = ExtResource("6_7ifpr")
+icon_alignment = 1
 
 [node name="PrintablesList" type="HFlowContainer" parent="VBoxContainer/VSplitContainer/PrintablesScrollContainer/VBoxContainer" unique_id=1355011890]
 unique_name_in_owner = true
@@ -131,5 +145,16 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.5529412, 0.5529412, 0.5529412, 1)
 text = "vx.x.x"
 
+[node name="SelectCustomCoverImageDialog" type="FileDialog" parent="." unique_id=714344954]
+unique_name_in_owner = true
+title = "Select cover image"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.png,*.jpg,*.jpeg,*.webp;Image Files;image/png,image/jpeg,image/webp")
+show_hidden_files = true
+use_native_dialog = true
+
 [connection signal="item_selected" from="VBoxContainer/HBoxContainer/ModelOrientationOptions" to="." method="_on_model_orientation_options_item_selected"]
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/RerenderButton" to="." method="_on_rerender_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/VSplitContainer/PrintablesScrollContainer/VBoxContainer/HBoxContainer/SelectCoverImageButton" to="." method="_on_select_cover_image_button_pressed"]
+[connection signal="file_selected" from="SelectCustomCoverImageDialog" to="." method="_on_select_custom_cover_image_dialog_file_selected"]
