@@ -147,7 +147,7 @@ text = "vx.x.x"
 
 [node name="SelectCustomCoverImageDialog" type="FileDialog" parent="." unique_id=714344954]
 unique_name_in_owner = true
-title = "Select cover image"
+title = "Open a File"
 file_mode = 0
 access = 2
 filters = PackedStringArray("*.png,*.jpg,*.jpeg,*.webp;Image Files;image/png,image/jpeg,image/webp")
