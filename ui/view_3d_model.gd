@@ -8,6 +8,7 @@ var mesh_default_orientation := Utils.ModelOrientation.Z_UP
 @onready var model_render := %ModelRender
 @onready var loading_panel := %LoadingPanel
 @onready var loading_show_timer := %LoadingShowTimer
+@onready var failed_panel := %FailedPanel
 
 func _process(_delta: float) -> void:	
 	var status := ResourceLoader.load_threaded_get_status(mesh_path)
@@ -17,6 +18,7 @@ func _process(_delta: float) -> void:
 		model_render.remove_model()
 		loading_panel.hide()
 		loading_show_timer.stop()
+		failed_panel.show()
 	elif status == ResourceLoader.THREAD_LOAD_LOADED:
 		# Load done
 		var mesh: ArrayMesh = ResourceLoader.load_threaded_get(mesh_path)
@@ -36,6 +38,8 @@ func show_3d_file(absolute_path: String, default_orientation: Utils.ModelOrienta
 		loading_panel.show()
 	else:
 		loading_show_timer.start()
+	
+	failed_panel.hide()
 	
 	mesh_path = absolute_path
 	mesh_default_orientation = default_orientation

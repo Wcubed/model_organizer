@@ -95,6 +95,18 @@ unique_name_in_owner = true
 wait_time = 0.5
 one_shot = true
 
+[node name="FailedPanel" type="PanelContainer" parent="VBoxContainer/ViewportBackground" unique_id=34117620]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/ViewportBackground/FailedPanel" unique_id=443076004]
+layout_mode = 2
+size_flags_vertical = 1
+text = "Failed to load :("
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [connection signal="pressed" from="VBoxContainer/PanelContainer/Toolbar/OpenExternalButton" to="." method="_on_open_external_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/Toolbar/CloseButton" to="." method="_on_close_button_pressed"]
 [connection signal="timeout" from="VBoxContainer/ViewportBackground/LoadingPanel/LoadingShowTimer" to="." method="_on_loading_show_timer_timeout"]
