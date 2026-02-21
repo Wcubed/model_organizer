@@ -79,5 +79,22 @@ render_target_update_mode = 4
 [node name="ModelRender" parent="VBoxContainer/ViewportBackground/SubViewportContainer/SubViewport" unique_id=310926734 instance=ExtResource("3_eg6m8")]
 unique_name_in_owner = true
 
+[node name="LoadingPanel" type="PanelContainer" parent="VBoxContainer/ViewportBackground" unique_id=155911846]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="LoadingLabel" type="Label" parent="VBoxContainer/ViewportBackground/LoadingPanel" unique_id=1995959208]
+layout_mode = 2
+size_flags_vertical = 1
+text = "Loading..."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LoadingShowTimer" type="Timer" parent="VBoxContainer/ViewportBackground/LoadingPanel" unique_id=112802988]
+unique_name_in_owner = true
+wait_time = 0.5
+one_shot = true
+
 [connection signal="pressed" from="VBoxContainer/PanelContainer/Toolbar/OpenExternalButton" to="." method="_on_open_external_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/Toolbar/CloseButton" to="." method="_on_close_button_pressed"]
+[connection signal="timeout" from="VBoxContainer/ViewportBackground/LoadingPanel/LoadingShowTimer" to="." method="_on_loading_show_timer_timeout"]
