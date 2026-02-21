@@ -10,8 +10,9 @@ var mesh_path := ""
 func show_3d_file(absolute_path: String, default_orientation: Utils.ModelOrientation):
 	mesh_path = absolute_path
 	
-	var result = STLIO.Importer.LoadFromPath(mesh_path)
+	var result = ResourceLoader.load(mesh_path)
 	if result is ArrayMesh:
+		print(result.get_surface_count())
 		model_render.show_model(result, default_orientation)
 	else:
 		model_render.remove_model()

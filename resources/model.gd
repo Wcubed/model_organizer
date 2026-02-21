@@ -40,7 +40,7 @@ var cover_image_override: String = ""
 
 var supported_image_extensions := [".jpg", ".jpeg", ".png", ".webp"]
 ## These extensions can be put on the 3d printer. Others can't.
-var printable_file_extensions := [".stl", ".3mf"]
+var printable_file_extensions := [".stl", ".obj", ".3mf"]
 
 ## The p_directory and library directory should be absolute paths.
 func _init(p_directory = "", library_directory = ""):
