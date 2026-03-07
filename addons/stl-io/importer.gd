@@ -4,6 +4,8 @@ static func LoadFromPath(path: String) -> Variant:
 	'''
 	:return: ArrayMesh or Error
 	'''
+	StlLoader.load_from_file(path)
+	
 	# first thing is to find wether we're loading text or a binary
 	var bytes := FileAccess.get_file_as_bytes(path)
 	if bytes.is_empty():
