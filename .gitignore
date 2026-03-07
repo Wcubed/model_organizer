@@ -4,4 +4,8 @@
 
 /export/
 
+# Blender
 *.blend1
+
+# Rust ignores
+/rust_native/target/
