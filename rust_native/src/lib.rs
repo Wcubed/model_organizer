@@ -41,12 +41,20 @@ impl StlLoader {
                     vertex_array.push(Vector3::new(vertex[0], vertex[1], vertex[2]));
                 }
                 for face in stl.faces {
-                    // Godots triangle vertex order is aparently inverse from that of stl_io.
-                    // Hence the reversing of the iterator.
+                    let mut indices = face.vertices;
+                    let a = vertex_array[indices[0]];
+                    let b = vertex_array[indices[1]];
+                    let c = vertex_array[indices[2]];
+                    let normal = Vector3::new(face.normal[0], face.normal[1], face.normal[2]);
+
+                    if Plane::from_points(a, b, c).normal.dot(normal) < 0.0 {
+                        // Plane is facing the wrong way.
+                        indices.reverse();
+                    }
+
                     for index in face.vertices.iter().rev() {
                         index_array.push(*index as i32);
-                        normal_array[*index] +=
-                            Vector3::new(face.normal[0], face.normal[1], face.normal[2]);
+                        normal_array[*index] += normal;
                     }
                 }
 
