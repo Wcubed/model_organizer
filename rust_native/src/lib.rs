@@ -1,10 +1,5 @@
 use godot::{
-    classes::{
-        ArrayMesh,
-        file_access::ModeFlags,
-        mesh::{ArrayType, PrimitiveType},
-    },
-    obj::IndexEnum,
+    classes::{ArrayMesh, file_access::ModeFlags, mesh::PrimitiveType},
     prelude::*,
 };
 
@@ -46,21 +41,12 @@ impl StlLoader {
                     vertex_array.push(Vector3::new(vertex[0], vertex[1], vertex[2]));
                 }
                 for face in stl.faces {
-                    // Calculate normal for each face. Because those in the file are not always correct.
-                    let idx_a = face.vertices[0];
-                    let idx_b = face.vertices[1];
-                    let idx_c = face.vertices[2];
-                    let a = vertex_array[idx_a];
-                    let b = vertex_array[idx_b];
-                    let c = vertex_array[idx_c];
-
-                    let ab = b - a;
-                    let ac = c - a;
-                    let normal = ac.cross(ab);
-
-                    for index in face.vertices {
-                        index_array.push(index as i32);
-                        normal_array[index] += normal;
+                    // Godots triangle vertex order is aparently inverse from that of stl_io.
+                    // Hence the reversing of the iterator.
+                    for index in face.vertices.iter().rev() {
+                        index_array.push(*index as i32);
+                        normal_array[*index] +=
+                            Vector3::new(face.normal[0], face.normal[1], face.normal[2]);
                     }
                 }
 
