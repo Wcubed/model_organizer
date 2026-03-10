@@ -1,0 +1,9 @@
+[build]
+# The provided docker container by `ufoot` has an old cargo version.
+pre-build = ["su", "rustup install stable"]
+
+[target.x86_64-pc-windows-gnu]
+# Use the image from https://github.com/ufoot/godot-rust-cross-compiler/tree/master
+# instead of the standard image. Because the standard image does not contain
+# everything needed for godot-rust.
+image = "docker.io/ufoot/godot-rust-cross-compiler:latest"
