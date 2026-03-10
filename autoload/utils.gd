@@ -94,3 +94,12 @@ func string_matches_search_pattern(string: String, pattern: String) -> StringMat
 					result = StringMatchResult.FAIL_MISSING_POSITIVE
 	
 	return result
+
+## Loads the given image. Tries to suppress the logging of errors,
+## because faulty external images are not our problem,
+## but we would still get the errors in the log.
+func load_image(image: Image, path: String) -> Error:
+	Engine.print_error_messages = false
+	var result = image.load(path)
+	Engine.print_error_messages = true
+	return result

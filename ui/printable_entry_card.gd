@@ -25,7 +25,7 @@ func display_file(model_base_dir: String, new_file: String, maybe_rendered_path:
 	# Attempt to load the rendered image.
 	if !maybe_rendered_path.is_empty():
 		var image := Image.new()
-		var result := image.load("%s/%s" % [model_base_dir, maybe_rendered_path])
+		var result := Utils.load_image(image, "%s/%s" % [model_base_dir, maybe_rendered_path])
 		if result == OK:
 			var texture := ImageTexture.create_from_image(image)
 			rendered_image.icon = texture

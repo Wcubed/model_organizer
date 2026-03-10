@@ -33,7 +33,7 @@ impl StlLoader {
             return FileAccess::get_open_error().to_variant();
         }
 
-        godot_print!("Got file");
+        // TODO (2026-03-10): Load ascii stl files.
 
         match load_stl_from_buffer(bytes) {
             Ok(mesh) => mesh.to_variant(),
@@ -56,7 +56,7 @@ fn load_stl_from_buffer(bytes: PackedByteArray) -> Result<Gd<ArrayMesh>, Error> 
     let mut vertices = PackedVector3Array::new();
     vertices.resize(triangle_count * 3);
     let mut normals = PackedVector3Array::new();
-    normals.resize(triangle_count);
+    normals.resize(triangle_count * 3);
 
     if offset + triangle_count * BYTES_PER_TRIANGLE > bytes.len() {
         return Err(Error::ERR_FILE_CORRUPT);
@@ -64,7 +64,9 @@ fn load_stl_from_buffer(bytes: PackedByteArray) -> Result<Gd<ArrayMesh>, Error> 
 
     for index in 0..triangle_count {
         let normal = get_vector(&bytes, &mut offset)?;
-        normals[index] = normal;
+        normals[index * 3] = normal;
+        normals[index * 3 + 1] = normal;
+        normals[index * 3 + 2] = normal;
 
         let v1 = get_vector(&bytes, &mut offset)?;
         let v2 = get_vector(&bytes, &mut offset)?;
@@ -83,6 +85,10 @@ fn load_stl_from_buffer(bytes: PackedByteArray) -> Result<Gd<ArrayMesh>, Error> 
             vertices[index * 3 + 1] = v2;
             vertices[index * 3 + 2] = v1;
         }
+
+        // According to wikipedia, most software does not use attributes, and neither do we.
+        let _attribute = bytes.decode_u16(offset).corrupt_err()?;
+        offset += 2;
     }
 
     let arrays = Array::from(&[
@@ -101,8 +107,6 @@ fn load_stl_from_buffer(bytes: PackedByteArray) -> Result<Gd<ArrayMesh>, Error> 
         Variant::nil(), // Indices
     ]);
     mesh.add_surface_from_arrays(PrimitiveType::TRIANGLES, &arrays);
-
-    godot_print!("{}", mesh.get_surface_count());
 
     Ok(mesh)
 }

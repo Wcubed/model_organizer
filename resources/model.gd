@@ -154,14 +154,14 @@ func _load_cover_image(relative_path: String) -> int:
 	var err := ERR_QUERY_FAILED
 	if !image_is_newer_than_cache:
 		# If the cache is up-to-date, try to load from cache.
-		err = image.load(cached_cover_path)
+		err = Utils.load_image(image, cached_cover_path)
 	
 	if err == OK:
 		# Cached image loaded
 		cover_image = ImageTexture.create_from_image(image)
 	else:
 		# No cached image, load the original.
-		err = image.load(absolute_image_path)
+		err = Utils.load_image(image, absolute_image_path)
 	
 		if err == OK:
 			Utils.fit_image_proportional(image)
