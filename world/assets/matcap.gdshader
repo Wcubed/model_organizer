@@ -1,7 +1,7 @@
 // https://godotshaders.com/shader/matcap/
 
 shader_type spatial;
-render_mode unshaded;
+render_mode cull_disabled, unshaded;
 
 uniform sampler2D texture_albedo : source_color, repeat_disable;
 uniform float edge_fix: hint_range(0.0, 0.03, 0.001) = 0.01;
