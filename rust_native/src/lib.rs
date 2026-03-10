@@ -52,8 +52,6 @@ fn load_stl_from_buffer(bytes: PackedByteArray) -> Result<Gd<ArrayMesh>, Error> 
     let triangle_count = bytes.decode_u32(offset).corrupt_err()? as usize;
     offset += 4;
 
-    godot_print!("count: {}", triangle_count);
-
     // Create the vectors with known capacity, to reduce re-allocation.
     let mut vertices = PackedVector3Array::new();
     vertices.resize(triangle_count * 3);
@@ -64,8 +62,6 @@ fn load_stl_from_buffer(bytes: PackedByteArray) -> Result<Gd<ArrayMesh>, Error> 
         return Err(Error::ERR_FILE_CORRUPT);
     }
 
-    godot_print!("File size correct");
-
     for index in 0..triangle_count {
         let normal = get_vector(&bytes, &mut offset)?;
         normals[index] = normal;
@@ -74,20 +70,19 @@ fn load_stl_from_buffer(bytes: PackedByteArray) -> Result<Gd<ArrayMesh>, Error> 
         let v2 = get_vector(&bytes, &mut offset)?;
         let v3 = get_vector(&bytes, &mut offset)?;
 
-        godot_print!("{} > {}", index * 3, vertices.len());
+        let calculated_normal = (v1 - v3).cross(v1 - v2);
 
-        if Plane::from_points(v1, v2, v3).normal.dot(normal) > 0.0 {
+        if calculated_normal.dot(normal) > 0.0 {
             // Face is the right way up.
             vertices[index * 3] = v1;
-            vertices[(index * 3) + 1] = v2;
-            vertices[(index * 3) + 2] = v3;
+            vertices[index * 3 + 1] = v2;
+            vertices[index * 3 + 2] = v3;
         } else {
             // Face is upside down.
             vertices[index * 3] = v3;
-            vertices[(index * 3) + 1] = v2;
-            vertices[(index * 3) + 2] = v1;
+            vertices[index * 3 + 1] = v2;
+            vertices[index * 3 + 2] = v1;
         }
-        godot_print!("{} done", index);
     }
 
     let arrays = Array::from(&[
