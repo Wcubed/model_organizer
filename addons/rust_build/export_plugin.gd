@@ -13,7 +13,7 @@ func _export_begin(features: PackedStringArray, is_debug: bool, path: String, fl
 
 func build_rust_linux() -> bool:
 	var output = []
-	var result := OS.execute("./rust_build_linux.sh", [], output, true)
+	var result := OS.execute("./rust_build_linux.sh", [], output, true, true)
 	
 	if result != 0:
 		output_cargo_error(output[0])
@@ -23,7 +23,7 @@ func build_rust_linux() -> bool:
 
 func build_rust_windows() -> bool:
 	var output = []
-	var result := OS.execute("./rust_build_windows.sh", [], output, true)
+	var result := OS.execute("./rust_build_windows.sh", [], output, true, true)
 	
 	if result != 0:
 		output_cargo_error(output[0])

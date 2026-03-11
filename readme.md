@@ -7,8 +7,7 @@ The code is available here in case someone wants to do something similar.
 
 # Building rust
 Rust code will build automatically when running or exporting the project.
-The first export to windows will take a while, because the cross compilation needs some setup.
 
 ## Dependencies
 - Cargo
-- cross, for cross compiling to windows: `cargo install cross`
+- For cross compilation to windows: mingw-w64-gcc. On arch it is in the package `mingw-w64-gcc`

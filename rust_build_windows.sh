@@ -3,4 +3,4 @@ cd rust_native
 
 TARGET="x86_64-pc-windows-gnu"
 
-cross build --target ${TARGET} --release
+cargo build --target ${TARGET} --release 2>&1 | tee target/windows_build.log

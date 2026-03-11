@@ -6,8 +6,8 @@ reloadable = true
 [libraries]
 linux.debug.x86_64 =     "res://rust_native/target/release/librust_native.so"
 linux.release.x86_64 =   "res://rust_native/target/release/librust_native.so"
-windows.debug.x86_64 =   "res://rust_native/target/release/rust_native.dll"
-windows.release.x86_64 = "res://rust_native/target/release/rust_native.dll"
+windows.debug.x86_64 =   "res://rust_native/target/x86_64-pc-windows-gnu/release/rust_native.dll"
+windows.release.x86_64 = "res://rust_native/target/x86_64-pc-windows-gnu/release/rust_native.dll"
 macos.debug =            "res://rust_native/target/release/librust_native.dylib"
 macos.release =          "res://rust_native/target/release/librust_native.dylib"
 macos.debug.arm64 =      "res://rust_native/target/release/librust_native.dylib"
