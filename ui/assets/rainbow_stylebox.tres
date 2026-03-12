@@ -1,0 +1,7 @@
+[gd_resource type="StyleBoxTexture" format=3 uid="uid://cxgs8q5ebx288"]
+
+[ext_resource type="Texture2D" uid="uid://b1t324n2jdg3c" path="res://ui/assets/rainbow.svg" id="1_q11nt"]
+
+[resource]
+texture = ExtResource("1_q11nt")
+region_rect = Rect2(0, 0, 64, 64)

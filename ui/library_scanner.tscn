@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://dpte1nbqy3t7m"]
 
 [ext_resource type="Script" uid="uid://do5630idg5ny2" path="res://ui/library_scanner.gd" id="1_ku3p2"]
+[ext_resource type="Texture2D" uid="uid://b1t324n2jdg3c" path="res://ui/assets/rainbow.svg" id="2_ctua7"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8kon4"]
 bg_color = Color(0, 0, 0, 0.60784316)
@@ -44,15 +45,15 @@ horizontal_alignment = 1
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="ProgressBar" type="ProgressBar" parent="CenterContainer/PanelContainer/VBoxContainer/HBoxContainer" unique_id=1448092782]
+[node name="ProgressBar" type="TextureProgressBar" parent="CenterContainer/PanelContainer/VBoxContainer/HBoxContainer" unique_id=50589651]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 1
 max_value = 1.0
-value = 0.29
-show_percentage = false
+step = 0.001
+value = 1.0
+texture_progress = ExtResource("2_ctua7")
 
 [node name="AmountLabel" type="Label" parent="CenterContainer/PanelContainer/VBoxContainer/HBoxContainer/ProgressBar" unique_id=118005498]
 unique_name_in_owner = true
@@ -63,6 +64,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+text = "0/11"
 horizontal_alignment = 1
 
 [node name="Sizerlabel" type="Label" parent="CenterContainer/PanelContainer/VBoxContainer/HBoxContainer" unique_id=1695085843]
