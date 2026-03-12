@@ -30,18 +30,148 @@ impl StlLoader {
             return FileAccess::get_open_error().to_variant();
         }
 
-        // TODO (2026-03-10): Load ascii stl files.
+        let text_header = bytes
+            .subarray(0..HEADER_BYTES)
+            .get_string_from_ascii()
+            .strip_edges(true, true);
+        let result = if text_header.begins_with("solid") {
+            load_stl_from_buffer_ascii(bytes)
+        } else {
+            load_stl_from_buffer_binary(bytes)
+        };
 
-        match load_stl_from_buffer(bytes) {
+        match result {
             Ok(mesh) => mesh.to_variant(),
             Err(error) => error.to_variant(),
         }
     }
 }
 
+enum ParseState {
+    Header,
+    Facet,
+    OuterLoop,
+    Vertex(usize),
+    EndLoop,
+    EndFacet,
+    EndSolid,
+}
+
+/// Rust version of stl load function from stlio:
+/// https://github.com/onze/godot-stl-io/blob/7700b430a2aac0bab1bee3dcad1ad70aa36e2017/addons/stl-io/importer.gd#L61
+fn load_stl_from_buffer_ascii(bytes: PackedByteArray) -> Result<Gd<ArrayMesh>, Error> {
+    let mut mesh = ArrayMesh::new_gd();
+    let mut vertices = PackedVector3Array::new();
+    let mut normals = PackedVector3Array::new();
+
+    let stl_string = bytes.get_string_from_ascii().to_string();
+
+    let mut state = ParseState::Header;
+    let mut normal = Vector3::ZERO;
+    let mut facet = [Vector3::ZERO; 3];
+
+    for full_line in stl_string.lines() {
+        let line = full_line.trim();
+
+        match state {
+            ParseState::Header => {
+                state = ParseState::Facet;
+            }
+            ParseState::Facet => {
+                if line.starts_with("endsolid") {
+                    state = ParseState::EndSolid;
+                    continue;
+                }
+
+                let tokens: Vec<&str> = line.split_whitespace().collect();
+                if tokens.len() != 5 {
+                    return Err(Error::ERR_FILE_CORRUPT);
+                }
+                // Line goes `facet normal <x> <y> <z>`
+                normal = Vector3 {
+                    x: tokens[2].parse::<f32>().corrupt_err()?,
+                    y: tokens[3].parse::<f32>().corrupt_err()?,
+                    z: tokens[4].parse::<f32>().corrupt_err()?,
+                };
+
+                normals.push(normal);
+                normals.push(normal);
+                normals.push(normal);
+
+                state = ParseState::OuterLoop;
+            }
+            ParseState::OuterLoop => {
+                state = ParseState::Vertex(0);
+            }
+            ParseState::Vertex(num) => {
+                let tokens: Vec<&str> = line.split_whitespace().collect();
+                if tokens.len() != 4 {
+                    return Err(Error::ERR_FILE_CORRUPT);
+                }
+                // Line goes `vertex <x> <y> <z>`
+                facet[num] = Vector3 {
+                    x: tokens[1].parse::<f32>().corrupt_err()?,
+                    y: tokens[2].parse::<f32>().corrupt_err()?,
+                    z: tokens[3].parse::<f32>().corrupt_err()?,
+                };
+
+                if num >= facet.len() - 1 {
+                    // Face complete.
+                    let calculated_normal = (facet[0] - facet[2]).cross(facet[0] - facet[1]);
+
+                    if calculated_normal.dot(normal) > 0.0 {
+                        // Face is the right way up.
+                        vertices.push(facet[0]);
+                        vertices.push(facet[1]);
+                        vertices.push(facet[2]);
+                    } else {
+                        // Face is upside down.
+                        vertices.push(facet[2]);
+                        vertices.push(facet[1]);
+                        vertices.push(facet[0]);
+                    }
+
+                    state = ParseState::EndLoop;
+                } else {
+                    state = ParseState::Vertex(num + 1);
+                }
+            }
+            ParseState::EndLoop => {
+                state = ParseState::EndFacet;
+            }
+            ParseState::EndFacet => {
+                state = ParseState::Facet;
+            }
+            ParseState::EndSolid => {
+                // End of the stl.
+                break;
+            }
+        }
+    }
+
+    let arrays = Array::from(&[
+        vertices.to_variant(), // Vertices
+        normals.to_variant(),  // Normals
+        Variant::nil(),
+        Variant::nil(),
+        Variant::nil(),
+        Variant::nil(),
+        Variant::nil(),
+        Variant::nil(),
+        Variant::nil(),
+        Variant::nil(),
+        Variant::nil(),
+        Variant::nil(),
+        Variant::nil(), // Indices
+    ]);
+    mesh.add_surface_from_arrays(PrimitiveType::TRIANGLES, &arrays);
+
+    Ok(mesh)
+}
+
 /// Rust version of the stl load function from stlio:
 /// https://github.com/onze/godot-stl-io/blob/7700b430a2aac0bab1bee3dcad1ad70aa36e2017/addons/stl-io/importer.gd#L139
-fn load_stl_from_buffer(bytes: PackedByteArray) -> Result<Gd<ArrayMesh>, Error> {
+fn load_stl_from_buffer_binary(bytes: PackedByteArray) -> Result<Gd<ArrayMesh>, Error> {
     let mut mesh = ArrayMesh::new_gd();
     // Header usually not important, so we skip it.
     let mut offset = HEADER_BYTES;
