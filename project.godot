@@ -27,7 +27,7 @@ window/size/mode=2
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/obj-import/plugin.cfg", "res://addons/rust_build/plugin.cfg", "res://addons/stl-io/plugin.cfg")
+enabled=PackedStringArray("res://addons/mesh_import/plugin.cfg", "res://addons/rust_build/plugin.cfg")
 
 [filesystem]
 
