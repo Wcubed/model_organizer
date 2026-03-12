@@ -1,5 +1,6 @@
-use std::{io::Cursor, iter::Zip};
+use std::io::Cursor;
 
+use glam::{Mat4, Vec3};
 use godot::{
     classes::{ArrayMesh, FileAccess, mesh::PrimitiveType},
     global::Error,
@@ -27,7 +28,6 @@ impl ThreemfLoader {
     /// Returns ArrayMesh or an integer to indicate error.
     #[func]
     fn load_from_file(path: GString) -> Variant {
-        godot_print!("Loading: {}", path);
         let bytes = FileAccess::get_file_as_bytes(&path);
         if bytes.is_empty() {
             return FileAccess::get_open_error().to_variant();
@@ -52,26 +52,26 @@ fn load_3mf_from_buffer(bytes: PackedByteArray) -> Result<Gd<ArrayMesh>, Lib3mfE
 
     let mut mesh = ArrayMesh::new_gd();
 
-    for object in model.resources.iter_objects() {
-        godot_print!("{:?}", object.id);
-    }
-
     for item in &model.build.items {
         let Some(object) = model.resources.get_object(item.object_id) else {
             // Object does not exist, ignore.
             continue;
         };
-        // TODO (2026-03-12): Use transform?
-        load_geometry(&object.geometry, &model, &mut archive, &mut mesh);
+        load_geometry(
+            &object.geometry,
+            item.transform,
+            &model,
+            &mut archive,
+            &mut mesh,
+        );
     }
-
-    godot_print!("{}", mesh.get_surface_count());
 
     Ok(mesh)
 }
 
 fn load_geometry(
     geometry: &Geometry,
+    transform: Mat4,
     model: &Model,
     archive: &mut dyn ArchiveReader,
     mesh: &mut Gd<ArrayMesh>,
@@ -85,9 +85,9 @@ fn load_geometry(
             normals.resize(mesh_3mf.triangles.len() * 3);
 
             for (index, triangle) in mesh_3mf.triangles.iter().enumerate() {
-                let v1 = vertex_to_vector(mesh_3mf.vertices[triangle.v1 as usize]);
-                let v2 = vertex_to_vector(mesh_3mf.vertices[triangle.v2 as usize]);
-                let v3 = vertex_to_vector(mesh_3mf.vertices[triangle.v3 as usize]);
+                let v1 = vertex_to_vector(mesh_3mf.vertices[triangle.v1 as usize], transform);
+                let v2 = vertex_to_vector(mesh_3mf.vertices[triangle.v2 as usize], transform);
+                let v3 = vertex_to_vector(mesh_3mf.vertices[triangle.v3 as usize], transform);
 
                 let calculated_normal = (v1 - v3).cross(v1 - v2);
 
@@ -119,10 +119,11 @@ fn load_geometry(
         }
         Geometry::Components(components) => {
             for component in &components.components {
+                let new_transform = transform * component.transform;
+
                 match model.resources.get_object(component.object_id) {
                     Some(object) => {
-                        // TODO (2026-03-12): Use transform?
-                        load_geometry(&object.geometry, model, archive, mesh);
+                        load_geometry(&object.geometry, new_transform, model, archive, mesh);
                     }
                     None => {
                         // Can't find the object by ID. Try to find by path.
@@ -139,8 +140,7 @@ fn load_geometry(
 
                         // With the submodel we don't need to look at the "Build" we can immediately iter the objects.
                         for object in submodel.resources.iter_objects() {
-                            // TODO (2026-03-12): Use transform?
-                            load_geometry(&object.geometry, model, archive, mesh);
+                            load_geometry(&object.geometry, new_transform, model, archive, mesh);
                         }
                     }
                 }
@@ -152,10 +152,13 @@ fn load_geometry(
     }
 }
 
-fn vertex_to_vector(vertex: Vertex) -> Vector3 {
+fn vertex_to_vector(vertex: Vertex, transform: Mat4) -> Vector3 {
+    let point = Vec3::new(vertex.x, vertex.y, vertex.z);
+    let projected = transform.project_point3(point);
+
     Vector3 {
-        x: vertex.x,
-        y: vertex.y,
-        z: vertex.z,
+        x: projected.x,
+        y: projected.y,
+        z: projected.z,
     }
 }
