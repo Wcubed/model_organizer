@@ -4,6 +4,8 @@ use godot::{
     prelude::*,
 };
 
+use crate::ToCorruptError;
+
 const HEADER_BYTES: usize = 80;
 const BYTES_PER_TRIANGLE: usize = 50;
 
@@ -114,14 +116,4 @@ fn get_vector(bytes: &PackedByteArray, offset: &mut usize) -> Result<Vector3, Er
     );
     *offset += 12;
     Ok(vector)
-}
-
-trait ToCorruptError<T> {
-    fn corrupt_err(self) -> Result<T, Error>;
-}
-
-impl<T> ToCorruptError<T> for Result<T, ()> {
-    fn corrupt_err(self) -> Result<T, Error> {
-        self.map_err(|()| Error::ERR_FILE_CORRUPT)
-    }
 }
