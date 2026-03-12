@@ -133,8 +133,8 @@ func _on_clear_search_button_pressed() -> void:
 	clear_and_select_search()
 
 
-func _on_model_info_view_show_3d_file(absolute_path: String, default_orientation: Utils.ModelOrientation) -> void:
-	view_3d_model.show_3d_file(absolute_path, default_orientation)
+func _on_model_info_view_show_3d_file(absolute_path: String, printable_name: String, default_orientation: Utils.ModelOrientation) -> void:
+	view_3d_model.show_3d_file(absolute_path, printable_name, default_orientation)
 
 
 func _on_search_edit_debounce_timeout() -> void:

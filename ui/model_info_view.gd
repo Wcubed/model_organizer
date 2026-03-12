@@ -1,7 +1,7 @@
 extends PanelContainer
 
 ## User requests that the given 3d file be shown in the main viewer.
-signal show_3d_file(absolute_path: String, default_orientation: Utils.ModelOrientation)
+signal show_3d_file(absolute_path: String, printable_name: String, default_orientation: Utils.ModelOrientation)
 signal render_icon_for_3d_file(absolute_path: String, model: Model)
 
 var model: Model = null
@@ -111,11 +111,11 @@ func _add_file_to_rest_list(file: String):
 	label.text = file.trim_prefix("/")
 	rest_list.add_child(label)
 
-func _on_printable_clicked(absolute_file: String, control: Control):
+func _on_printable_clicked(absolute_file: String, printable_name: String, control: Control):
 	clear_printable_selection()
 	control.show_selected(true)
 	
-	show_3d_file.emit(absolute_file, model.default_orientation)
+	show_3d_file.emit(absolute_file, printable_name, model.default_orientation)
 
 
 func _on_rerender_button_pressed() -> void:

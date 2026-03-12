@@ -1,6 +1,6 @@
 extends PanelContainer
 
-signal preview_printable(file: String, control: Control)
+signal preview_printable(file: String, name: String, control: Control)
 
 var file: String = ""
 
@@ -51,4 +51,4 @@ func _on_folderbutton_pressed() -> void:
 	Utils.select_file_in_file_manager(file)
 
 func _on_rendered_image_pressed() -> void:
-	preview_printable.emit(file, self)
+	preview_printable.emit(file, name_label.text, self)
