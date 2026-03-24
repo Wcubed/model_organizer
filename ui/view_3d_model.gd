@@ -3,6 +3,7 @@ extends PanelContainer
 signal closing()
 
 var mesh_path := ""
+var loading := false
 var mesh_default_orientation := Utils.ModelOrientation.Z_UP
 
 @onready var model_render := %ModelRender
@@ -11,24 +12,27 @@ var mesh_default_orientation := Utils.ModelOrientation.Z_UP
 @onready var failed_panel := %FailedPanel
 
 func _process(_delta: float) -> void:
-	var status := ResourceLoader.load_threaded_get_status(mesh_path)
-	
-	if status == ResourceLoader.THREAD_LOAD_FAILED:
-		# Something is wrong with this file, we cannot load it.
-		model_render.remove_model()
-		loading_panel.hide()
-		loading_show_timer.stop()
-		failed_panel.show()
-	elif status == ResourceLoader.THREAD_LOAD_LOADED:
-		# Load done
-		var mesh: ArrayMesh = ResourceLoader.load_threaded_get(mesh_path)
+	if loading:
+		var status := ResourceLoader.load_threaded_get_status(mesh_path)
 		
-		model_render.show_model(mesh, mesh_default_orientation)
-		loading_panel.hide()
-		loading_show_timer.stop()
-	else:
-		# Nothing to do.
-		pass
+		if status == ResourceLoader.THREAD_LOAD_FAILED:
+			# Something is wrong with this file, we cannot load it.
+			model_render.remove_model()
+			loading_panel.hide()
+			loading_show_timer.stop()
+			failed_panel.show()
+			loading = false
+		elif status == ResourceLoader.THREAD_LOAD_LOADED:
+			# Load done
+			var mesh: ArrayMesh = ResourceLoader.load_threaded_get(mesh_path)
+			
+			model_render.show_model(mesh, mesh_default_orientation)
+			loading_panel.hide()
+			loading_show_timer.stop()
+			loading = false
+		else:
+			# Nothing to do.
+			pass
 
 
 func show_3d_file(absolute_path: String, printable_name: String, default_orientation: Utils.ModelOrientation):
@@ -42,6 +46,7 @@ func show_3d_file(absolute_path: String, printable_name: String, default_orienta
 	failed_panel.hide()
 	
 	mesh_path = absolute_path
+	loading = true
 	mesh_default_orientation = default_orientation
 	print(printable_name)
 	%Title.text = printable_name
@@ -52,6 +57,7 @@ func show_3d_file(absolute_path: String, printable_name: String, default_orienta
 
 func hide_3d_file():
 	mesh_path = ""
+	loading = false
 	%Title.text = ""
 	model_render.remove_model()
 	hide()
