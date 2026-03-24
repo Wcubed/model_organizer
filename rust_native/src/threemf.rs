@@ -53,6 +53,11 @@ fn load_3mf_from_buffer(bytes: PackedByteArray) -> Result<Gd<ArrayMesh>, Lib3mfE
     let mut mesh = ArrayMesh::new_gd();
 
     for item in &model.build.items {
+        if item.printable == Some(false) {
+            // Item should not be printed. And thus not be shown.
+            continue;
+        }
+
         let Some(object) = model.resources.get_object(item.object_id) else {
             // Object does not exist, ignore.
             continue;
@@ -138,8 +143,8 @@ fn load_geometry(
                             continue;
                         };
 
-                        // With the submodel we don't need to look at the "Build" we can immediately iter the objects.
-                        for object in submodel.resources.iter_objects() {
+                        // Sometimes a submodel contains multiple objects, so we need to make sure we select only the one we need.
+                        if let Some(object) = submodel.resources.get_object(component.object_id) {
                             load_geometry(&object.geometry, new_transform, model, archive, mesh);
                         }
                     }
