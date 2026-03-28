@@ -33,7 +33,7 @@ impl StlLoader {
         let text_header = bytes
             .subarray(0..HEADER_BYTES)
             .get_string_from_ascii()
-            .strip_edges(true, true);
+            .strip_edges();
         let result = if text_header.begins_with("solid") {
             load_stl_from_buffer_ascii(bytes)
         } else {

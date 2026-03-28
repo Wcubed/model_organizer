@@ -7,7 +7,7 @@ edition = "2024"
 crate-type = ["cdylib"]
 
 [dependencies]
-godot = { version = "0.4.5", features = ["api-4-5", "experimental-threads"] }
+godot = { version = "0.5", features = ["api-4-6", "experimental-threads"] }
 lib3mf-core = { version = "0.4", features = ["parallel"] }
 # Dependency of lib3mf-core that wasn't re-exported.
 glam = "0.31.1"
