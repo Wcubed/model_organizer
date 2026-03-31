@@ -19,6 +19,10 @@ boot_splash/stretch_mode=0
 boot_splash/image="uid://y6jlu2fywi3"
 config/icon="uid://w8xmyagqohf0"
 
+[audio]
+
+driver/driver="Dummy"
+
 [autoload]
 
 Utils="*uid://bi23marhytk6n"
@@ -26,6 +30,7 @@ Utils="*uid://bi23marhytk6n"
 [display]
 
 window/size/mode=2
+window/energy_saving/keep_screen_on=false
 
 [editor_plugins]
 
@@ -55,7 +60,8 @@ ui_back={
 
 [physics]
 
-3d/physics_engine="Jolt Physics"
+2d/physics_engine="Dummy"
+3d/physics_engine="Dummy"
 
 [rendering]
 

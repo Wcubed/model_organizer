@@ -1,6 +1,8 @@
 Browser/organizer for 3d printable models made for personal use.
 The code is available here in case someone wants to do something similar.
 
+The first scan of a library will take a while, because we are generating smaller cover images for each model.
+
 ![library](screenshots/library.png)
 ![preview](screenshots/preview.png)
 
