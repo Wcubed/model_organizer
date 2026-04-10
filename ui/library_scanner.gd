@@ -55,6 +55,12 @@ func _process(_delta: float) -> void:
 
 ## Starts the library scan in the background.
 func background_scan_library(library_dir: String):
+	var rust_scan_start = Time.get_unix_time_from_system()
+	var scanner := LibraryScanner.new()
+	scanner.scan(library_dir)
+	var time_taken = Time.get_unix_time_from_system() - rust_scan_start
+	print("rust time: ", time_taken, "s")
+	
 	show()
 	found_models.clear()
 	amount_found = 0

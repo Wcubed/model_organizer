@@ -2,6 +2,8 @@ use std::num::ParseFloatError;
 
 use godot::{global::Error, prelude::*};
 
+mod library_scanner;
+mod model;
 mod stl;
 mod threemf;
 
