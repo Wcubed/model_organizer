@@ -24,4 +24,4 @@ func _exit_tree() -> void:
 
 
 func _build() -> bool:
-	return export_plugin.build_rust_linux()
+	return export_plugin.execute_build_command("./rust_build_linux.sh")

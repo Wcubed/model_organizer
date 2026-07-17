@@ -1,10 +1,7 @@
-use std::{sync::Arc, thread};
+use std::thread;
 
 use camino::{Utf8Path, Utf8PathBuf};
-use crossbeam::{
-    channel::{Receiver, Sender},
-    queue::SegQueue,
-};
+use crossbeam::channel::{Receiver, Sender};
 use godot::prelude::*;
 
 use crate::model::RustModel;
