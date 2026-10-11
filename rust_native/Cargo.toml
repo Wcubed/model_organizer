@@ -7,10 +7,10 @@ edition = "2024"
 crate-type = ["cdylib"]
 
 [dependencies]
-godot = { version = "0.5.2", features = ["api-4-7", "experimental-threads"] }
+godot = { version = "0.5.5", features = ["experimental-threads"] }
 lib3mf-core = { version = "0.4", features = ["parallel"] }
 # Dependency of lib3mf-core that wasn't re-exported.
 glam = "0.31.1"
-camino = "1.2.2"
-crossbeam = "0.8.4"
+camino = "1.2.6"
+crossbeam = "0.8.5"
 rust-ini = "0.21.3"

@@ -1,12 +1,10 @@
 [gd_scene format=3 uid="uid://bxk33afbqntw8"]
 
-[ext_resource type="Script" uid="uid://cp6bws4rospck" path="res://world/model_render.gd" id="1_c33fe"]
 [ext_resource type="Environment" uid="uid://bnk7kl00ipr4m" path="res://world/assets/new_environment.tres" id="2_4ydpa"]
 [ext_resource type="Material" uid="uid://dkd18jtnr7rj3" path="res://world/assets/matcap.material" id="3_c2p1a"]
 [ext_resource type="ArrayMesh" uid="uid://dp0oalvfdmamd" path="res://world/assets/monkey.stl" id="4_c2p1a"]
 
-[node name="ModelRender" type="Node3D" unique_id=310926734]
-script = ExtResource("1_c33fe")
+[node name="ModelRender" type="ModelRenderer" unique_id=688937852]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1049711310]
 environment = ExtResource("2_4ydpa")
@@ -18,6 +16,7 @@ transform = Transform3D(0.7071065, -0.3535532, 0.61237216, 0, 0.866025, 0.499999
 [node name="Camera3D" type="Camera3D" parent="CameraAnchor" unique_id=1472047281]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3)
+current = true
 
 [node name="ModelAnchor" type="Node3D" parent="." unique_id=614833153]
 unique_name_in_owner = true

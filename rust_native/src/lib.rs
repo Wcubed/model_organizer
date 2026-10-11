@@ -6,6 +6,7 @@ mod library_scanner;
 mod model;
 mod stl;
 mod threemf;
+mod ui;
 
 struct RustNativeExtension;
 

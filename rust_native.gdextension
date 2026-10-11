@@ -12,3 +12,6 @@ macos.debug =            "res://rust_native/target/release/librust_native.dylib"
 macos.release =          "res://rust_native/target/release/librust_native.dylib"
 macos.debug.arm64 =      "res://rust_native/target/release/librust_native.dylib"
 macos.release.arm64 =    "res://rust_native/target/release/librust_native.dylib"
+
+[icons]
+ModelRenderer = "res://icons/aperture.svg"
