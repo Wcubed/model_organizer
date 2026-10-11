@@ -11,6 +11,8 @@ godot = { version = "0.5.5", features = ["experimental-threads"] }
 lib3mf-core = { version = "0.4", features = ["parallel"] }
 # Dependency of lib3mf-core that wasn't re-exported.
 glam = "0.31.1"
-camino = "1.2.6"
+camino = { version = "1.2.6", features = ["serde1"] }
 crossbeam = "0.8.5"
-rust-ini = "0.21.3"
+toml = "1.1.8"
+serde = { version = "1.0.229", features = ["derive"] }
+lexical-sort = "0.3.1"

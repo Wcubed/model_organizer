@@ -33,7 +33,7 @@ impl LibraryScanner {
 
         let model_thread = thread::spawn(move || model_scan_thread(receiver));
 
-        scan_dir(dir, &sender);
+        scan_dir_for_models(dir, &sender);
         // Notify the model threads that we are done.
         drop(sender);
 
@@ -44,7 +44,7 @@ impl LibraryScanner {
 
 /// Scans the given directory recursively for models.
 /// Adds any suspected model directories to the model queue.
-fn scan_dir(dir: &Utf8Path, model_sender: &Sender<Utf8PathBuf>) {
+fn scan_dir_for_models(dir: &Utf8Path, model_sender: &Sender<Utf8PathBuf>) {
     let Ok(read_dir) = dir.read_dir_utf8() else {
         return;
     };
@@ -73,7 +73,7 @@ fn scan_dir(dir: &Utf8Path, model_sender: &Sender<Utf8PathBuf>) {
 
     // Directory is not a model directory, scan subdirectories.
     for subdir in subdirs {
-        scan_dir(&subdir, model_sender);
+        scan_dir_for_models(&subdir, model_sender);
     }
 }
 
