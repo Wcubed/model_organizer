@@ -150,6 +150,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "distance"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6d9d8664cf849d7d0f3114a3a387d2f5e4303176d746d5a951aaddc66dfe9240"
+
+[[package]]
 name = "either"
 version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -176,6 +182,15 @@ name = "foldhash"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d9c4f5dac5e15c24eb999c26181a6ca40b39fe946cbe4c263c7209467bc83af2"
+
+[[package]]
+name = "fuzzy-cmp"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3fa8863503406835198342f26f68795818c76318e9a6d616a09b0beef7a5061d"
+dependencies = [
+ "distance",
+]
 
 [[package]]
 name = "gdextension-api"
@@ -550,6 +565,7 @@ version = "0.1.0"
 dependencies = [
  "camino",
  "crossbeam",
+ "fuzzy-cmp",
  "glam 0.31.1",
  "godot",
  "lexical-sort",

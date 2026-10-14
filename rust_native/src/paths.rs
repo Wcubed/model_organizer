@@ -89,6 +89,14 @@ impl RelativePath {
     pub fn with_extension(&self, arg: &str) -> Self {
         Self(self.0.with_extension(arg))
     }
+
+    pub fn file_name(&self) -> Option<&str> {
+        self.0.file_name()
+    }
+
+    pub fn as_str(&self) -> &str {
+        self.0.as_str()
+    }
 }
 
 pub struct ReadDirAbsolute(ReadDirUtf8);

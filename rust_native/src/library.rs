@@ -1,6 +1,7 @@
-use std::thread::{self, JoinHandle};
+use std::thread::{self, JoinHandle, scope};
 
 use crossbeam::channel::{Receiver, Sender};
+use fuzzy_cmp::hybrid_compare;
 use godot::prelude::*;
 use lexical_sort::natural_cmp;
 
@@ -16,7 +17,7 @@ pub const CONFIG_FILE_NAME: &str = "config.moa";
 struct Library {
     library_dir: AbsolutePath,
     /// Contains the models after the scan is done.
-    models: Vec<RustModel>,
+    models: Vec<Gd<RustModel>>,
     scan_thread: Option<JoinHandle<Vec<RustModel>>>,
 }
 
@@ -27,6 +28,45 @@ impl Library {
             models: vec![],
             scan_thread: None,
         }
+    }
+
+    /// Search the model list and returns matches in order of best-to-worst.
+    /// Is case-insensitive.
+    /// If the search string is empty: returns the entire list.
+    pub fn search_models(&self, search_str: &str) -> Vec<Gd<RustModel>> {
+        if search_str.is_empty() {
+            return self.models.clone();
+        }
+
+        let lowercase_search = search_str.to_lowercase();
+
+        let mut scored: Vec<(f32, Gd<RustModel>)> = self
+            .models
+            .iter()
+            .cloned()
+            .map(|model| {
+                let score = {
+                    hybrid_compare(
+                        &lowercase_search,
+                        &model.bind().path().as_str().to_lowercase(),
+                    )
+                };
+
+                (score, model)
+            })
+            .filter(|(score, _)| *score > 0.0)
+            .collect();
+
+        // TODO (2026-10-14): Also search the printable files, and add that somehow to the score?
+
+        scored.sort_by(|(score, _), (other, _)| {
+            score
+                .partial_cmp(other)
+                .expect("We know these floats cannot be NaN")
+        });
+
+        // TODO (2026-10-14): There is probably a better way than allocating 2 vectors. But this works.
+        scored.into_iter().map(|(_, model)| model).collect()
     }
 
     /// Starts a scan, if there isn't one ongoing.
@@ -45,12 +85,12 @@ impl Library {
         self.scan_thread.is_some()
     }
 
-    /// Call this while [`Self::is_scanning`] is returns true.
+    /// Call this while [`Self::is_scanning`] returns true.
     pub fn maybe_join_scan(&mut self) {
         if let Some(thread) = self.scan_thread.take_if(|thread| thread.is_finished()) {
             match thread.join() {
                 Ok(models) => {
-                    self.models = models;
+                    self.models = models.into_iter().map(|model| model.to_gd()).collect();
                 }
                 Err(error) => {
                     godot_error!("Scan thread failed with: {:?}", error);
@@ -65,9 +105,10 @@ impl Library {
 fn directory_scan_thread(library_dir: AbsolutePath) -> Vec<RustModel> {
     let (sender, receiver) = crossbeam::channel::unbounded();
 
-    let model_thread = thread::spawn(move || model_scan_thread(receiver));
+    let library_root = library_dir.clone();
+    let model_thread = thread::spawn(move || model_scan_thread(receiver, library_root));
 
-    scan_dir_for_models(&library_dir, &sender);
+    scan_dir_for_models(&library_dir, &library_dir, &sender);
     // Notify the model threads that we are done.
     drop(sender);
 
@@ -78,11 +119,14 @@ fn directory_scan_thread(library_dir: AbsolutePath) -> Vec<RustModel> {
 }
 
 /// Recieves model paths from the directory scan thread, then scans the models.
-fn model_scan_thread(model_receiver: Receiver<AbsolutePath>) -> Vec<RustModel> {
+fn model_scan_thread(
+    model_receiver: Receiver<RelativePath>,
+    library_root: AbsolutePath,
+) -> Vec<RustModel> {
     let mut models = vec![];
 
     while let Ok(path) = model_receiver.recv() {
-        let mut model = RustModel::new(path);
+        let mut model = RustModel::new(path, library_root.clone());
         model.scan_model_dir();
         models.push(model);
     }
@@ -92,7 +136,11 @@ fn model_scan_thread(model_receiver: Receiver<AbsolutePath>) -> Vec<RustModel> {
 
 /// Scans the given directory recursively for models.
 /// Adds any suspected model directories to the model queue.
-fn scan_dir_for_models(dir: &AbsolutePath, model_sender: &Sender<AbsolutePath>) {
+fn scan_dir_for_models(
+    dir: &AbsolutePath,
+    library_root: &AbsolutePath,
+    model_sender: &Sender<RelativePath>,
+) {
     let Ok(read_dir) = dir.read_dir() else {
         return;
     };
@@ -111,9 +159,11 @@ fn scan_dir_for_models(dir: &AbsolutePath, model_sender: &Sender<AbsolutePath>) 
             }
 
             // Directory is a model directory.
-            model_sender
-                .send(dir.clone())
-                .expect("Receivers should be waiting for us to disconnect.");
+            if let Ok(relative_dir) = dir.strip_prefix(library_root) {
+                model_sender
+                    .send(relative_dir)
+                    .expect("Receivers should be waiting for us to disconnect.");
+            }
 
             return;
         }
@@ -125,16 +175,17 @@ fn scan_dir_for_models(dir: &AbsolutePath, model_sender: &Sender<AbsolutePath>) 
         .find(|dir| dir.as_str().to_lowercase().ends_with("/files"))
         .is_some()
     {
-        // Directory is a model directory.
-        model_sender
-            .send(dir.clone())
-            .expect("Receivers should be waiting for us to disconnect.");
+        if let Ok(relative_dir) = dir.strip_prefix(library_root) {
+            model_sender
+                .send(relative_dir)
+                .expect("Receivers should be waiting for us to disconnect.");
+        }
         return;
     }
 
     // Directory is not a model directory, scan subdirectories.
     for subdir in subdirs {
-        scan_dir_for_models(&subdir, model_sender);
+        scan_dir_for_models(&subdir, library_root, model_sender);
     }
 }
 

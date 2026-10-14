@@ -9,13 +9,13 @@ use crate::{
     paths::{AbsolutePath, RelativePath},
 };
 
-// TODO (2026-10-11): Implement all the missing stuff from the godot version of this class.
 // TODO (2026-10-11): After implementing the missing stuff: rename this one to "model" and refactor the inevatable problems in godot.
 #[derive(GodotClass)]
 #[class(base=RefCounted, no_init)]
 pub struct RustModel {
     name: String,
-    path: AbsolutePath,
+    path: RelativePath,
+    library_root: AbsolutePath,
     config: ModelConfig,
 
     printables: Vec<Printable>,
@@ -43,28 +43,33 @@ impl RustModel {
         &self.name
     }
 
-    pub fn path(&self) -> &AbsolutePath {
+    pub fn path(&self) -> &RelativePath {
         &self.path
     }
 }
 
 impl RustModel {
-    pub fn new(path: AbsolutePath) -> Self {
+    pub fn new(path: RelativePath, library_root: AbsolutePath) -> Self {
         // The name of the model is the directory name (yes you get it by calling 'file_name').
         let name = path.file_name().unwrap_or("no name").to_string();
 
         Self {
             name,
             path,
+            library_root,
             config: ModelConfig::default(),
             printables: vec![],
             misc_files: BTreeSet::new(),
         }
     }
 
+    pub fn to_gd(self) -> Gd<Self> {
+        Gd::from_init_fn(|_| self)
+    }
+
     /// Call this once after creating this resource.
     pub fn scan_model_dir(&mut self) {
-        let root_path = self.path.clone();
+        let root_path = self.library_root.join(&self.path);
         let config_path = root_path.join_str(CONFIG_FILE_NAME);
         self.config = ModelConfig::load_or_default(&config_path);
 
@@ -133,7 +138,12 @@ impl RustModel {
     }
 
     fn save_config(&self) {
-        self.config.save(&self.path.join_str(CONFIG_FILE_NAME));
+        self.config.save(
+            &&self
+                .library_root
+                .join(&self.path)
+                .join_str(CONFIG_FILE_NAME),
+        );
     }
 }
 
