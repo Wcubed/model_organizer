@@ -7,9 +7,12 @@ use serde::{Deserialize, Serialize};
 
 use crate::library_scanner::{CONFIG_FILE_NAME, PRINTABLE_EXTENSIONS, matches_extension};
 
+// TODO (2026-10-11): Implement all the missing stuff from the godot version of this class.
+// TODO (2026-10-11): After implementing the missing stuff: rename this one to "model" and refactor the inevatable problems in godot.
 #[derive(GodotClass)]
 #[class(base=RefCounted, no_init)]
 pub struct RustModel {
+    name: String,
     /// Absolute path of this model folder.
     absolute_path: Utf8PathBuf,
     config: ModelConfig,
@@ -30,16 +33,28 @@ impl RustModel {
 
     /// TODO (2026-10-11): Use enum.
     #[func]
-    fn set_default_orientation(&mut self, orientation: u8) {
+    fn set_default_orientation(&mut self, orientation: RenderSideUp) {
         // TODO (2026-10-11): Request re-rendering the printables.
         self.config.default_orientation = orientation;
         self.save_config();
+    }
+
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn path(&self) -> &Utf8Path {
+        &self.absolute_path
     }
 }
 
 impl RustModel {
     pub fn new(absolute_path: &Utf8Path) -> Self {
+        // The name of the model is the directory name (yes you get it by calling 'file_name').
+        let name = absolute_path.file_name().unwrap_or("no name").to_string();
+
         Self {
+            name,
             absolute_path: absolute_path.to_path_buf(),
             config: ModelConfig::default(),
             printables: vec![],
@@ -150,8 +165,7 @@ impl PartialOrd for Printable {
 /// Saved in a `.moa` file next to the model.
 #[derive(Debug, Default, Serialize, Deserialize)]
 struct ModelConfig {
-    /// TODO (2026-10-11): Should be an enum, with Z_UP: 0, and Y_UP: 1.
-    default_orientation: u8,
+    default_orientation: RenderSideUp,
     cover_image_override: Option<Utf8PathBuf>,
 }
 
@@ -160,9 +174,17 @@ impl ModelConfig {
         std::fs::read_to_string(path)
             .ok()
             .and_then(|contents| {
-                // When godot saved the preferences, there was a "[main]" prefixed. With toml this is not necessary, so we ignore it.
-                let stripped_content = contents.strip_prefix("[main]").unwrap_or(&contents);
-                toml::from_str(stripped_content).ok()
+                // Change from the old format to the new.
+                let replaced_contents = &contents
+                    .replace(
+                        "[main]\ndefault_orientation=0",
+                        "default_orientation = \"Z\"",
+                    )
+                    .replace(
+                        "[main]\ndefault_orientation=1",
+                        "default_orientation = \"Y\"",
+                    );
+                toml::from_str(replaced_contents).ok()
             })
             .unwrap_or_default()
     }
@@ -175,4 +197,13 @@ impl ModelConfig {
         let _ = std::fs::write(path, &toml)
             .inspect_err(|err| godot_error!("Failed to write config to file `{}`: {}", path, err));
     }
+}
+
+#[derive(Debug, Default, Clone, Copy, GodotConvert, Var, Export, Serialize, Deserialize)]
+#[godot(via = GString)]
+pub enum RenderSideUp {
+    #[default]
+    Z,
+    Y,
+    X,
 }

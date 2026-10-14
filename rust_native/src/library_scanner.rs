@@ -3,10 +3,11 @@ use std::thread;
 use camino::{Utf8Path, Utf8PathBuf};
 use crossbeam::channel::{Receiver, Sender};
 use godot::prelude::*;
+use lexical_sort::natural_cmp;
 
 use crate::model::RustModel;
 
-pub const IGNORED_EXTENSIONS: &[&str] = &["zip", "rar", "moa"];
+pub const IGNORED_EXTENSIONS: &[&str] = &["zip", "rar", "moa", "md", "txt"];
 pub const PRINTABLE_EXTENSIONS: &[&str] = &["stl", "obj", "3mf"];
 pub const CONFIG_FILE_NAME: &str = "config.moa";
 
@@ -37,7 +38,9 @@ impl LibraryScanner {
         // Notify the model threads that we are done.
         drop(sender);
 
-        let models = model_thread.join().expect("Thread should not fail");
+        let mut models = model_thread.join().expect("Thread should not fail");
+        models.sort_by(|a, b| natural_cmp(&a.name().to_lowercase(), &b.name().to_lowercase()));
+
         godot_print!("processed: {}", models.len());
     }
 }
@@ -69,6 +72,19 @@ fn scan_dir_for_models(dir: &Utf8Path, model_sender: &Sender<Utf8PathBuf>) {
 
             return;
         }
+    }
+
+    // No matching files. Check for "files" directory from thingyverse.
+    if subdirs
+        .iter()
+        .find(|dir| dir.as_str().to_lowercase().ends_with("/files"))
+        .is_some()
+    {
+        // Directory is a model directory.
+        model_sender
+            .send(dir.to_path_buf())
+            .expect("Receivers should be waiting for us to disconnect.");
+        return;
     }
 
     // Directory is not a model directory, scan subdirectories.
