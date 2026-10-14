@@ -24,14 +24,13 @@ pub struct RustModel {
 #[godot_api]
 impl RustModel {
     #[func]
-    fn set_cover_image(&mut self, path: GString) {
+    fn set_cover_image_override(&mut self, path: GString) {
         let new_path = Utf8PathBuf::from(&path.to_string());
         // TODO (2026-10-11): Load the new cover image, and only edit and save the config if the cover image could be loaded.
         self.config.cover_image_override = Some(new_path);
         self.save_config();
     }
 
-    /// TODO (2026-10-11): Use enum.
     #[func]
     fn set_default_orientation(&mut self, orientation: RenderSideUp) {
         // TODO (2026-10-11): Request re-rendering the printables.
