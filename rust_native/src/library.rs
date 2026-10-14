@@ -1,73 +1,73 @@
-use core::error;
 use std::thread::{self, JoinHandle};
 
-use camino::{Utf8Path, Utf8PathBuf};
 use crossbeam::channel::{Receiver, Sender};
 use godot::prelude::*;
 use lexical_sort::natural_cmp;
 
-use crate::model::RustModel;
+use crate::{
+    model::RustModel,
+    paths::{AbsolutePath, RelativePath},
+};
 
 pub const IGNORED_EXTENSIONS: &[&str] = &["zip", "rar", "moa", "md", "txt"];
 pub const PRINTABLE_EXTENSIONS: &[&str] = &["stl", "obj", "3mf"];
 pub const CONFIG_FILE_NAME: &str = "config.moa";
 
-struct LibraryScanner {
-    library_dir: Utf8PathBuf,
+struct Library {
+    library_dir: AbsolutePath,
+    /// Contains the models after the scan is done.
+    models: Vec<RustModel>,
     scan_thread: Option<JoinHandle<Vec<RustModel>>>,
 }
 
-impl LibraryScanner {
-    pub fn new(library_dir: GString) -> Self {
-        let dir_string = library_dir.to_string();
-        let dir = Utf8PathBuf::from(&dir_string);
-
+impl Library {
+    pub fn new(library_dir: AbsolutePath) -> Self {
         Self {
-            library_dir: dir,
+            library_dir,
+            models: vec![],
             scan_thread: None,
         }
     }
 
     /// Starts a scan, if there isn't one ongoing.
-    pub fn scan(&mut self, library_dir: GString) {
+    pub fn scan(&mut self) {
         if self.scan_thread.is_some() {
             // A scan is running, or the result has not yet been collected.
             return;
         }
 
-        self.scan_thread = Some(thread::spawn(|| directory_scan_thread(library_dir)));
+        let dir = self.library_dir.clone();
+
+        self.scan_thread = Some(thread::spawn(|| directory_scan_thread(dir)));
     }
 
     pub fn is_scanning(&self) -> bool {
         self.scan_thread.is_some()
     }
 
-    /// Will return the result of the scan 1 time after the scan is complete.
-    pub fn get_result(&mut self) -> Option<Vec<RustModel>> {
+    /// Call this while [`Self::is_scanning`] is returns true.
+    pub fn maybe_join_scan(&mut self) {
         if let Some(thread) = self.scan_thread.take_if(|thread| thread.is_finished()) {
             match thread.join() {
-                Ok(models) => Some(models),
+                Ok(models) => {
+                    self.models = models;
+                }
                 Err(error) => {
                     godot_error!("Scan thread failed with: {:?}", error);
-                    Some(vec![])
+                    self.models.clear();
                 }
             }
-        } else {
-            None
         }
     }
 }
 
 /// Scans the given directory for models. Then passes the model paths to the model scanning thread.
-fn directory_scan_thread(library_dir: GString) -> Vec<RustModel> {
-    let dir_string = library_dir.to_string();
-    let dir = Utf8Path::new(&dir_string);
-
+fn directory_scan_thread(library_dir: AbsolutePath) -> Vec<RustModel> {
     let (sender, receiver) = crossbeam::channel::unbounded();
 
     let model_thread = thread::spawn(move || model_scan_thread(receiver));
 
-    scan_dir_for_models(dir, &sender);
+    scan_dir_for_models(&library_dir, &sender);
     // Notify the model threads that we are done.
     drop(sender);
 
@@ -78,11 +78,11 @@ fn directory_scan_thread(library_dir: GString) -> Vec<RustModel> {
 }
 
 /// Recieves model paths from the directory scan thread, then scans the models.
-fn model_scan_thread(model_receiver: Receiver<Utf8PathBuf>) -> Vec<RustModel> {
+fn model_scan_thread(model_receiver: Receiver<AbsolutePath>) -> Vec<RustModel> {
     let mut models = vec![];
 
     while let Ok(path) = model_receiver.recv() {
-        let mut model = RustModel::new(&path);
+        let mut model = RustModel::new(path);
         model.scan_model_dir();
         models.push(model);
     }
@@ -92,15 +92,15 @@ fn model_scan_thread(model_receiver: Receiver<Utf8PathBuf>) -> Vec<RustModel> {
 
 /// Scans the given directory recursively for models.
 /// Adds any suspected model directories to the model queue.
-fn scan_dir_for_models(dir: &Utf8Path, model_sender: &Sender<Utf8PathBuf>) {
-    let Ok(read_dir) = dir.read_dir_utf8() else {
+fn scan_dir_for_models(dir: &AbsolutePath, model_sender: &Sender<AbsolutePath>) {
+    let Ok(read_dir) = dir.read_dir() else {
         return;
     };
 
     let mut subdirs = vec![];
 
     for entry in read_dir.filter_map(|entry| entry.ok()) {
-        let path = entry.path().to_path_buf();
+        let path = entry.path();
 
         if path.is_dir() {
             subdirs.push(path);
@@ -112,7 +112,7 @@ fn scan_dir_for_models(dir: &Utf8Path, model_sender: &Sender<Utf8PathBuf>) {
 
             // Directory is a model directory.
             model_sender
-                .send(dir.to_path_buf())
+                .send(dir.clone())
                 .expect("Receivers should be waiting for us to disconnect.");
 
             return;
@@ -127,7 +127,7 @@ fn scan_dir_for_models(dir: &Utf8Path, model_sender: &Sender<Utf8PathBuf>) {
     {
         // Directory is a model directory.
         model_sender
-            .send(dir.to_path_buf())
+            .send(dir.clone())
             .expect("Receivers should be waiting for us to disconnect.");
         return;
     }
@@ -140,7 +140,7 @@ fn scan_dir_for_models(dir: &Utf8Path, model_sender: &Sender<Utf8PathBuf>) {
 
 /// Checks if the extension of the path is contained in the given list.
 /// Expects the extensions list in lowercase, without the dot.
-pub fn matches_extension(path: &Utf8Path, extensions: &[&str]) -> bool {
+pub fn matches_extension(path: &AbsolutePath, extensions: &[&str]) -> bool {
     let Some(ext) = path.extension() else {
         return false;
     };
