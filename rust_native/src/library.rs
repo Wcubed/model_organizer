@@ -2,7 +2,7 @@ use std::thread::{self, JoinHandle, scope};
 
 use crossbeam::channel::{Receiver, Sender};
 use fuzzy_cmp::hybrid_compare;
-use godot::prelude::*;
+use godot::{prelude::*, tools::get_autoload_by_name};
 use lexical_sort::natural_cmp;
 
 use crate::{
@@ -14,20 +14,43 @@ pub const IGNORED_EXTENSIONS: &[&str] = &["zip", "rar", "moa", "md", "txt"];
 pub const PRINTABLE_EXTENSIONS: &[&str] = &["stl", "obj", "3mf"];
 pub const CONFIG_FILE_NAME: &str = "config.moa";
 
-struct Library {
-    library_dir: AbsolutePath,
+/// Library holding all the models.
+/// Meant to be auto-loaded.
+#[derive(GodotClass)]
+#[class(init, base=Node)]
+pub struct Library {
+    base: Base<Node>,
+
+    library_dir: Option<AbsolutePath>,
     /// Contains the models after the scan is done.
     models: Vec<Gd<RustModel>>,
     scan_thread: Option<JoinHandle<Vec<RustModel>>>,
 }
 
+#[godot_api]
+impl INode for Library {
+    fn process(&mut self, _delta: f32) {
+        // See if we are scanning, and update if so.
+        self.maybe_join_scan();
+    }
+}
+
+#[godot_api]
 impl Library {
-    pub fn new(library_dir: AbsolutePath) -> Self {
-        Self {
-            library_dir,
-            models: vec![],
-            scan_thread: None,
-        }
+    #[signal]
+    pub fn scan_started();
+
+    #[signal]
+    pub fn scan_complete();
+}
+
+impl Library {
+    pub fn singleton() -> Gd<Self> {
+        get_autoload_by_name("LibraryGlobal")
+    }
+
+    pub fn get_library_dir(&self) -> &Option<AbsolutePath> {
+        &self.library_dir
     }
 
     /// Search the model list and returns matches in order of best-to-worst.
@@ -70,15 +93,17 @@ impl Library {
     }
 
     /// Starts a scan, if there isn't one ongoing.
-    pub fn scan(&mut self) {
+    pub fn scan(&mut self, library_dir: AbsolutePath) {
         if self.scan_thread.is_some() {
             // A scan is running, or the result has not yet been collected.
             return;
         }
 
-        let dir = self.library_dir.clone();
+        self.signals().scan_started().emit();
 
-        self.scan_thread = Some(thread::spawn(|| directory_scan_thread(dir)));
+        self.library_dir = Some(library_dir.clone());
+
+        self.scan_thread = Some(thread::spawn(|| directory_scan_thread(library_dir)));
     }
 
     pub fn is_scanning(&self) -> bool {
@@ -86,7 +111,7 @@ impl Library {
     }
 
     /// Call this while [`Self::is_scanning`] returns true.
-    pub fn maybe_join_scan(&mut self) {
+    fn maybe_join_scan(&mut self) {
         if let Some(thread) = self.scan_thread.take_if(|thread| thread.is_finished()) {
             match thread.join() {
                 Ok(models) => {
@@ -97,6 +122,8 @@ impl Library {
                     self.models.clear();
                 }
             }
+
+            self.signals().scan_complete().emit();
         }
     }
 }

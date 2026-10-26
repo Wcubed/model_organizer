@@ -15,3 +15,5 @@ macos.release.arm64 =    "res://rust_native/target/release/librust_native.dylib"
 
 [icons]
 ModelRenderer = "res://icons/aperture.svg"
+Libary = "res://icons/library.svg"
+Toolbar = "res://icons/wrench.svg"

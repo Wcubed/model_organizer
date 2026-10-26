@@ -1,0 +1,34 @@
+[gd_scene format=3 uid="uid://dpvcmven1sd6q"]
+
+[ext_resource type="StyleBox" uid="uid://herl200qgivh" path="res://ui/assets/main_background.tres" id="1_v71gt"]
+[ext_resource type="PackedScene" uid="uid://dr6ya7ynf5wfp" path="res://ui/Toolbar.tscn" id="2_2k0g6"]
+[ext_resource type="PackedScene" uid="uid://b36dvgy8ker8h" path="res://ui/scan_progress_bar.tscn" id="3_hbvmh"]
+
+[node name="MainPanel" type="MainPanel" unique_id=1193534576]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = ExtResource("1_v71gt")
+
+[node name="HSplitContainer" type="HSplitContainer" parent="." unique_id=2097261608]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HSplitContainer" unique_id=310048550]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Toolbar" parent="HSplitContainer/VBoxContainer" unique_id=1534436476 instance=ExtResource("2_2k0g6")]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="HSplitContainer" unique_id=1618906680]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="ScanProgressBar" parent="." unique_id=2012622497 instance=ExtResource("3_hbvmh")]
+visible = false
+layout_mode = 2

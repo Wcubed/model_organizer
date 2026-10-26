@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://dr6ya7ynf5wfp"]
+
+[ext_resource type="StyleBox" uid="uid://dsm55rfa1xmm4" path="res://ui/assets/basic_panel.tres" id="1_nr23t"]
+
+[node name="Toolbar" type="Toolbar" unique_id=1534436476]
+theme_override_styles/panel = ExtResource("1_nr23t")
+
+[node name="PathButton" type="Button" parent="." unique_id=1676290111]
+unique_name_in_owner = true
+layout_mode = 2
+text = "..."
+
+[node name="FolderDialog" type="FileDialog" parent="." unique_id=1045826068]
+oversampling_override = 1.0
+title = "Open a Directory"
+initial_position = 1
+size = Vector2i(1000, 500)
+file_mode = 2
+access = 2
+show_hidden_files = true
+use_native_dialog = true
+folder_creation_enabled = false
+deleting_enabled = false
