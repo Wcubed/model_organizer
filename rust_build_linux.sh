@@ -2,4 +2,4 @@
 set -euo pipefail
 
 cd rust_native
-cargo build --release
+cargo build ${1-}

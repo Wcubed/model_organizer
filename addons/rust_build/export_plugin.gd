@@ -15,17 +15,22 @@ func _get_name() -> String:
 	return "RustExportPlugin"
 
 func _export_begin(features: PackedStringArray, is_debug: bool, path: String, flags: int) -> void:
+	var arguments = []
+	
+	if not is_debug:
+		arguments = ["--release"]
+	
 	if features.find("linux") != -1:
-		start_build_command("./rust_build_linux.sh")
+		start_build_command("./rust_build_linux.sh", arguments)
 	if features.find("windows") != -1:
-		start_build_command("./rust_build_windows.sh")
+		start_build_command("./rust_build_windows.sh", arguments)
 	
 	# Wait for the build to finish.
 	while update_running_build():
 		OS.delay_msec(500)
 
 
-func start_build_command(command: String):
+func start_build_command(command: String, arguments: PackedStringArray):
 	if not handles.is_empty():
 		# A build is already running.
 		return

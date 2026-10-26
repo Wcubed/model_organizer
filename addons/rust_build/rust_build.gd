@@ -56,7 +56,7 @@ func _exit_tree() -> void:
 
 
 func _on_build_button_pressed():
-	export_plugin.start_build_command("./rust_build_linux.sh")
+	export_plugin.start_build_command("./rust_build_linux.sh", [])
 
 
 func _process(delta: float) -> void:

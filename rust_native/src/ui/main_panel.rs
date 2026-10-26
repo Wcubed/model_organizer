@@ -3,8 +3,6 @@ use godot::{
     prelude::*,
 };
 
-use crate::library::Library;
-
 #[derive(GodotClass)]
 #[class(init, base = PanelContainer)]
 struct MainPanel {

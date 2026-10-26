@@ -139,7 +139,7 @@ impl RustModel {
 
     fn save_config(&self) {
         self.config.save(
-            &&self
+            &self
                 .library_root
                 .join(&self.path)
                 .join_str(CONFIG_FILE_NAME),
