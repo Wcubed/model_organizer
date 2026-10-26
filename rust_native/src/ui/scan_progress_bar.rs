@@ -3,7 +3,7 @@ use godot::{
     prelude::*,
 };
 
-use crate::library::Library;
+use crate::{connect_signals, library::Library};
 
 #[derive(GodotClass)]
 #[class(init, base = PanelContainer)]
@@ -15,13 +15,10 @@ struct ScanProgressBar {
 impl IPanelContainer for ScanProgressBar {
     fn ready(&mut self) {
         let lib = Library::singleton();
-        lib.signals()
-            .scan_started()
-            .connect_other(self, Self::on_scan_started);
-
-        lib.signals()
-            .scan_complete()
-            .connect_other(self, Self::on_scan_complete);
+        connect_signals!(self, [
+            lib, scan_started => Self::on_scan_started;
+            lib, scan_complete => Self::on_scan_complete;
+        ]);
     }
 }
 

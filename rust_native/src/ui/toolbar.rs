@@ -4,7 +4,7 @@ use godot::{
     prelude::*,
 };
 
-use crate::{library::Library, paths::AbsolutePath};
+use crate::{connect_signals, library::Library, paths::AbsolutePath};
 
 #[derive(GodotClass)]
 #[class(init, base = PanelContainer)]
@@ -20,15 +20,10 @@ struct Toolbar {
 #[godot_api]
 impl IPanelContainer for Toolbar {
     fn ready(&mut self) {
-        self.path_button
-            .signals()
-            .pressed()
-            .connect_other(self, Self::on_path_button_pressed);
-
-        self.folder_dialog
-            .signals()
-            .dir_selected()
-            .connect_other(self, Self::on_dir_selected);
+        connect_signals!(self, [
+            self.path_button, pressed => Self::on_path_button_pressed;
+            self.folder_dialog, dir_selected => Self::on_dir_selected;
+        ]);
     }
 }
 

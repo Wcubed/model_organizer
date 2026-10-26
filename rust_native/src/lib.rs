@@ -29,3 +29,17 @@ impl<T> ToCorruptError<T> for Result<T, ParseFloatError> {
         self.map_err(|_| Error::ERR_FILE_CORRUPT)
     }
 }
+
+/// Convenience macro for connecting signals to a function on another object.
+/// For example `self`.
+#[macro_export]
+macro_rules! connect_signals {
+    ($target:expr, [$($source:expr, $signal:ident => $function:expr;)*]) => {{
+        $(
+            $source.signals()
+                .$signal()
+                .connect_other($target, $function);
+        )*
+
+    }};
+}
