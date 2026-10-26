@@ -3,12 +3,43 @@
 [ext_resource type="StyleBox" uid="uid://dsm55rfa1xmm4" path="res://ui/assets/basic_panel.tres" id="1_nr23t"]
 
 [node name="Toolbar" type="Toolbar" unique_id=1534436476]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 39.0
+grow_horizontal = 2
 theme_override_styles/panel = ExtResource("1_nr23t")
 
-[node name="PathButton" type="Button" parent="." unique_id=1676290111]
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1642424244]
+layout_mode = 2
+
+[node name="PathButton" type="Button" parent="HBoxContainer" unique_id=1676290111]
 unique_name_in_owner = true
 layout_mode = 2
 text = "..."
+
+[node name="ReloadButton" type="Button" parent="HBoxContainer" unique_id=235205056]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Reload library"
+text = "Reload"
+
+[node name="SearchEdit" type="LineEdit" parent="HBoxContainer" unique_id=1068399487]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Search"
+
+[node name="ClearSearchButton" type="Button" parent="HBoxContainer" unique_id=879534902]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+tooltip_text = "Clear searchbar"
+text = "X"
+
+[node name="AmountLabel" type="Label" parent="HBoxContainer" unique_id=1973360697]
+unique_name_in_owner = true
+layout_mode = 2
+text = "100"
 
 [node name="FolderDialog" type="FileDialog" parent="." unique_id=1045826068]
 oversampling_override = 1.0

@@ -1,4 +1,4 @@
-use std::thread::{self, JoinHandle, scope};
+use std::thread::{self, JoinHandle};
 
 use crossbeam::channel::{Receiver, Sender};
 use fuzzy_cmp::hybrid_compare;
@@ -25,6 +25,9 @@ pub struct Library {
     /// Contains the models after the scan is done.
     models: Vec<Gd<RustModel>>,
     scan_thread: Option<JoinHandle<Vec<RustModel>>>,
+
+    /// Result of a call to `search_models`.
+    search_result: Vec<Gd<RustModel>>,
 }
 
 #[godot_api]
@@ -42,6 +45,10 @@ impl Library {
 
     #[signal]
     pub fn scan_complete();
+
+    /// A call to `search_mmodels` has completed.
+    #[signal]
+    pub fn model_search_complete();
 }
 
 impl Library {
@@ -53,12 +60,21 @@ impl Library {
         &self.library_dir
     }
 
+    pub fn get_model_count(&self) -> usize {
+        self.models.len()
+    }
+
+    /// Returns the models found by the call to `search_models`.
+    pub fn get_search_result(&self) -> &[Gd<RustModel>] {
+        &self.search_result
+    }
+
     /// Search the model list and returns matches in order of best-to-worst.
     /// Is case-insensitive.
     /// If the search string is empty: returns the entire list.
-    pub fn search_models(&self, search_str: &str) -> Vec<Gd<RustModel>> {
+    pub fn search_models(&mut self, search_str: &str) {
         if search_str.is_empty() {
-            return self.models.clone();
+            self.search_result = self.models.clone();
         }
 
         let lowercase_search = search_str.to_lowercase();
@@ -89,7 +105,8 @@ impl Library {
         });
 
         // TODO (2026-10-14): There is probably a better way than allocating 2 vectors. But this works.
-        scored.into_iter().map(|(_, model)| model).collect()
+        self.search_result = scored.into_iter().map(|(_, model)| model).collect();
+        self.signals().model_search_complete().emit();
     }
 
     /// Starts a scan, if there isn't one ongoing.
