@@ -25,6 +25,7 @@ pub struct Library {
     /// Contains the models after the scan is done.
     models: Vec<Gd<RustModel>>,
     scan_thread: Option<JoinHandle<Vec<RustModel>>>,
+    progress_report: Option<Receiver<ScanProgress>>,
 
     /// Result of a call to `search_models`.
     search_result: Vec<Gd<RustModel>>,
@@ -63,12 +64,20 @@ impl Library {
         &self.library_dir
     }
 
-    pub fn set_library_dir(&mut self, dir: AbsolutePath) {
+    pub fn set_library_dir(&mut self, dir: AbsolutePath, from_config: bool) {
         self.library_dir = Some(dir.clone());
 
-        self.signals()
-            .library_dir_path_changed()
-            .emit(dir.as_str().to_string());
+        if !from_config {
+            // Save the config.
+            self.signals()
+                .library_dir_path_changed()
+                .emit(dir.as_str().to_string());
+        }
+    }
+
+    /// Returns a progress receiver if a scan is running.
+    pub fn get_scan_progress(&self) -> Option<Receiver<ScanProgress>> {
+        self.progress_report.clone()
     }
 
     pub fn get_model_count(&self) -> usize {
@@ -130,9 +139,12 @@ impl Library {
             return;
         };
 
+        let (sender, receiver) = crossbeam::channel::unbounded();
+        self.progress_report = Some(receiver);
+
         self.signals().scan_started().emit();
 
-        self.scan_thread = Some(thread::spawn(|| directory_scan_thread(library_dir)));
+        self.scan_thread = Some(thread::spawn(|| directory_scan_thread(library_dir, sender)));
     }
 
     pub fn is_scanning(&self) -> bool {
@@ -152,19 +164,25 @@ impl Library {
                 }
             }
 
+            self.progress_report = None;
             self.signals().scan_complete().emit();
         }
     }
 }
 
 /// Scans the given directory for models. Then passes the model paths to the model scanning thread.
-fn directory_scan_thread(library_dir: AbsolutePath) -> Vec<RustModel> {
+fn directory_scan_thread(
+    library_dir: AbsolutePath,
+    progress: Sender<ScanProgress>,
+) -> Vec<RustModel> {
     let (sender, receiver) = crossbeam::channel::unbounded();
 
     let library_root = library_dir.clone();
-    let model_thread = thread::spawn(move || model_scan_thread(receiver, library_root));
+    let model_progress = progress.clone();
+    let model_thread =
+        thread::spawn(move || model_scan_thread(receiver, library_root, model_progress));
 
-    scan_dir_for_models(&library_dir, &library_dir, &sender);
+    scan_dir_for_models(&library_dir, &library_dir, &sender, &progress);
     // Notify the model threads that we are done.
     drop(sender);
 
@@ -178,6 +196,7 @@ fn directory_scan_thread(library_dir: AbsolutePath) -> Vec<RustModel> {
 fn model_scan_thread(
     model_receiver: Receiver<RelativePath>,
     library_root: AbsolutePath,
+    progress: Sender<ScanProgress>,
 ) -> Vec<RustModel> {
     let mut models = vec![];
 
@@ -185,6 +204,7 @@ fn model_scan_thread(
         let mut model = RustModel::new(path, library_root.clone());
         model.scan_model_dir();
         models.push(model);
+        let _ = progress.send(ScanProgress::ScannedModel);
     }
 
     models
@@ -196,6 +216,7 @@ fn scan_dir_for_models(
     dir: &AbsolutePath,
     library_root: &AbsolutePath,
     model_sender: &Sender<RelativePath>,
+    progress: &Sender<ScanProgress>,
 ) {
     let Ok(read_dir) = dir.read_dir() else {
         return;
@@ -219,6 +240,7 @@ fn scan_dir_for_models(
                 model_sender
                     .send(relative_dir)
                     .expect("Receivers should be waiting for us to disconnect.");
+                let _ = progress.send(ScanProgress::FoundModel);
             }
 
             return;
@@ -235,13 +257,14 @@ fn scan_dir_for_models(
             model_sender
                 .send(relative_dir)
                 .expect("Receivers should be waiting for us to disconnect.");
+            let _ = progress.send(ScanProgress::FoundModel);
         }
         return;
     }
 
     // Directory is not a model directory, scan subdirectories.
     for subdir in subdirs {
-        scan_dir_for_models(&subdir, library_root, model_sender);
+        scan_dir_for_models(&subdir, library_root, model_sender, progress);
     }
 }
 
@@ -253,4 +276,10 @@ pub fn matches_extension(path: &AbsolutePath, extensions: &[&str]) -> bool {
     };
 
     extensions.contains(&ext.to_lowercase().as_str())
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum ScanProgress {
+    FoundModel,
+    ScannedModel,
 }

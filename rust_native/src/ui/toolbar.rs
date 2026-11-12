@@ -88,7 +88,7 @@ impl Toolbar {
         if let Ok(absolute_path) = AbsolutePath::new(&utf_path) {
             let mut lib = Library::singleton();
             let mut lib_mut = lib.bind_mut();
-            lib_mut.set_library_dir(absolute_path);
+            lib_mut.set_library_dir(absolute_path, false);
             lib_mut.scan();
         }
     }

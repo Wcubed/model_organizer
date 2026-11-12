@@ -49,7 +49,9 @@ impl MainPanel {
             .ok()
             .and_then(|dir| AbsolutePath::new(Utf8Path::new(&dir)).ok())
         {
-            Library::singleton().bind_mut().set_library_dir(library_dir);
+            Library::singleton()
+                .bind_mut()
+                .set_library_dir(library_dir, true);
         }
     }
 
