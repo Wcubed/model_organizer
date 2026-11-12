@@ -46,9 +46,12 @@ impl Library {
     #[signal]
     pub fn scan_complete();
 
-    /// A call to `search_mmodels` has completed.
+    /// A call to `search_models` has completed.
     #[signal]
     pub fn model_search_complete();
+
+    #[signal]
+    pub fn library_dir_path_changed(new_path: String);
 }
 
 impl Library {
@@ -58,6 +61,14 @@ impl Library {
 
     pub fn get_library_dir(&self) -> &Option<AbsolutePath> {
         &self.library_dir
+    }
+
+    pub fn set_library_dir(&mut self, dir: AbsolutePath) {
+        self.library_dir = Some(dir.clone());
+
+        self.signals()
+            .library_dir_path_changed()
+            .emit(dir.as_str().to_string());
     }
 
     pub fn get_model_count(&self) -> usize {
@@ -110,15 +121,16 @@ impl Library {
     }
 
     /// Starts a scan, if there isn't one ongoing.
-    pub fn scan(&mut self, library_dir: AbsolutePath) {
+    pub fn scan(&mut self) {
         if self.scan_thread.is_some() {
             // A scan is running, or the result has not yet been collected.
             return;
         }
+        let Some(library_dir) = self.library_dir.clone() else {
+            return;
+        };
 
         self.signals().scan_started().emit();
-
-        self.library_dir = Some(library_dir.clone());
 
         self.scan_thread = Some(thread::spawn(|| directory_scan_thread(library_dir)));
     }

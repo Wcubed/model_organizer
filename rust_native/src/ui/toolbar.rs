@@ -80,16 +80,16 @@ impl Toolbar {
     }
 
     fn on_reload_button_pressed(&mut self) {
-        let maybe_path = Library::singleton().bind().get_library_dir().clone();
-        if let Some(path) = maybe_path {
-            Library::singleton().bind_mut().scan(path);
-        }
+        Library::singleton().bind_mut().scan();
     }
 
     fn on_dir_selected(&mut self, dir_path: GString) {
         let utf_path = Utf8PathBuf::from(dir_path.to_string());
         if let Ok(absolute_path) = AbsolutePath::new(&utf_path) {
-            Library::singleton().bind_mut().scan(absolute_path);
+            let mut lib = Library::singleton();
+            let mut lib_mut = lib.bind_mut();
+            lib_mut.set_library_dir(absolute_path);
+            lib_mut.scan();
         }
     }
 
