@@ -32,13 +32,30 @@ impl<T> ToCorruptError<T> for Result<T, ParseFloatError> {
 
 /// Convenience macro for connecting signals to a function on another object.
 /// For example `self`.
+/// These are called immediately, so watch out for re-borrowing an object twice.
 #[macro_export]
-macro_rules! connect_signals {
+macro_rules! connect_signals_immediate {
     ($target:expr, [$($source:expr, $signal:ident => $function:expr;)*]) => {{
         $(
             $source.signals()
                 .$signal()
                 .connect_other($target, $function);
+        )*
+
+    }};
+}
+
+/// Convenience macro for connecting signals to a function on another object.
+/// For example `self`.
+/// Signals will be called during idle time. This should prevent re-borrows of the same object.
+#[macro_export]
+macro_rules! connect_signals {
+    ($target:expr, [$($source:expr, $signal:ident => $function:expr;)*]) => {{
+        use godot::classes::object::ConnectFlags;
+        $(
+            $source.signals()
+                .$signal().builder().flags(ConnectFlags::DEFERRED)
+                .connect_other_mut($target, $function);
         )*
 
     }};

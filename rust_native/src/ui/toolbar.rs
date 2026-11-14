@@ -33,15 +33,9 @@ impl IPanelContainer for Toolbar {
     fn ready(&mut self) {
         self.amount_label.set_text("");
 
-        Library::singleton()
-            .signals()
-            .model_search_complete()
-            .builder()
-            .flags(ConnectFlags::DEFERRED)
-            .connect_other_mut(self, Self::on_search_complete);
-
         connect_signals!(self, [
             Library::singleton(), scan_complete => Self::on_scan_complete;
+            Library::singleton(), model_search_complete => Self::on_search_complete;
             self.path_button, pressed => Self::on_path_button_pressed;
             self.reload_button, pressed => Self::on_reload_button_pressed;
             self.clear_button, pressed => Self::on_clear_button_pressed;
